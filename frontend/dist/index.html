@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameRig — Digital Game Library Management System</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- React & Lucide Icon Libraries -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* GameRig Core CSS Design System */
+    :root {
+      --bg-primary: #07090e;
+      --bg-secondary: #0d111a;
+      --bg-card: #131924;
+      --bg-card-hover: #1b2332;
+      --bg-glass: rgba(19, 25, 36, 0.8);
+      --accent-primary: #00ff88;
+      --accent-secondary: #10b981;
+      --accent-glow: rgba(0, 255, 136, 0.25);
+      --accent-gradient: linear-gradient(135deg, #00ff88 0%, #10b981 100%);
+      --text-primary: #ffffff;
+      --text-secondary: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(0, 255, 136, 0.3);
+      --font-main: 'Outfit', sans-serif;
+      --font-display: 'Rajdhani', sans-serif;
+    }
+    body.light-mode {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8fafc;
+      --bg-glass: rgba(255, 255, 255, 0.88);
+      --accent-primary: #059669;
+      --accent-secondary: #10b981;
+      --accent-glow: rgba(5, 150, 105, 0.2);
+      --accent-gradient: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --border-color: rgba(0, 0, 0, 0.12);
+      --border-glow: rgba(5, 150, 105, 0.4);
+    }
+    body.light-mode .input-control { background: #ffffff; color: #0f172a; border-color: rgba(0,0,0,0.15); }
+    body.light-mode .btn-secondary { background: #f1f5f9; color: #0f172a; border-color: rgba(0,0,0,0.15); }
+    body.light-mode .data-table { background: #ffffff; color: #0f172a; }
+    body.light-mode .data-table th { background: #f1f5f9; color: #475569; }
+    body.light-mode .badge-gray { background: rgba(0, 0, 0, 0.06); color: #475569; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-main); overflow-x: hidden; transition: background 0.3s ease, color 0.3s ease; }
+    .app-container { min-height: 100vh; display: flex; flex-direction: column; }
+    .main-content { flex: 1; padding: 2rem; max-width: 1400px; width: 100%; margin: 0 auto; }
+    h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; }
+    .gradient-text { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .glass-panel { background: var(--bg-glass); backdrop-filter: blur(16px); border: 1px solid var(--border-color); border-radius: 16px; }
+    .game-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; transition: all 0.3s ease; display: flex; flex-direction: column; }
+    .game-card:hover { transform: translateY(-6px); border-color: var(--border-glow); box-shadow: 0 12px 30px rgba(0, 255, 136, 0.15); }
+    .card-img-container { position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; background: #1e293b; }
+    .card-img-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .game-card:hover .card-img-container img { transform: scale(1.08); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600; font-family: var(--font-main); cursor: pointer; transition: all 0.2s ease; border: none; font-size: 0.95rem; }
+    .btn-primary { background: var(--accent-gradient); color: #052e16; box-shadow: 0 4px 15px var(--accent-glow); }
+    .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
+    .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-primary); border: 1px solid var(--border-color); }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+    .btn-danger { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .btn-sm { padding: 0.4rem 0.85rem; font-size: 0.85rem; border-radius: 8px; }
+    .form-group { margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-group label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+    .input-control { width: 100%; padding: 0.75rem 1rem; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); font-size: 0.95rem; outline: none; }
+    .input-control:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; }
+    .badge-green { background: rgba(0, 255, 136, 0.12); color: var(--accent-primary); border: 1px solid rgba(0, 255, 136, 0.3); }
+    .badge-gray { background: rgba(255, 255, 255, 0.08); color: var(--text-secondary); }
+    .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .table-responsive { width: 100%; overflow-x: auto; border-radius: 12px; border: 1px solid var(--border-color); }
+    .data-table { width: 100%; border-collapse: collapse; text-align: left; background: var(--bg-card); }
+    .data-table th, .data-table td { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color); }
+    .data-table th { background: rgba(255, 255, 255, 0.03); color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 1.5rem; }
+    .modal-content { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; width: 100%; max-width: 580px; padding: 2rem; position: relative; }
+    .toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; }
+    .toast { padding: 1rem 1.5rem; border-radius: 12px; background: #1e293b; color: #fff; border: 1px solid var(--accent-primary); }
+    .emoji-btn { padding: 0.35rem 0.65rem; border-radius: 20px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); color: #cbd5e1; cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem; transition: all 0.15s ease; }
+    .emoji-btn.active { background: rgba(0, 255, 136, 0.18); border-color: #00ff88; color: #00ff88; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const API_BASE = '/api';
+
+    function getAuthToken() { return localStorage.getItem('gamerig_token'); }
+    function setAuthToken(t) { t ? localStorage.setItem('gamerig_token', t) : localStorage.removeItem('gamerig_token'); }
+    function getSavedUser() { const u = localStorage.getItem('gamerig_user'); return u ? JSON.parse(u) : null; }
+    function setSavedUser(u) { u ? localStorage.setItem('gamerig_user', JSON.stringify(u)) : localStorage.removeItem('gamerig_user'); }
+
+    async function req(endpoint, opts = {}) {
+      const token = getAuthToken();
+      const headers = { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}), ...opts.headers };
+      const res = await fetch(`${API_BASE}${endpoint}`, { ...opts, headers });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || 'Request failed');
+      return data;
+    }
+
+    const api = {
+      login: (c) => req('/auth/login', { method: 'POST', body: JSON.stringify(c) }),
+      register: (u) => req('/auth/register', { method: 'POST', body: JSON.stringify(u) }),
+      getGames: (p = {}) => req(`/games${new URLSearchParams(p).toString() ? `?${new URLSearchParams(p).toString()}` : ''}`),
+      getGame: (id) => req(`/games/${id}`),
+      createGame: (d) => req('/games', { method: 'POST', body: JSON.stringify(d) }),
+      updateGame: (id, d) => req(`/games/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
+      deleteGame: (id) => req(`/games/${id}`, { method: 'DELETE' }),
+      getUsers: () => req('/users'),
+      getUser: (id) => req(`/users/${id}`),
+      updateUser: (id, d) => req(`/users/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
+      deleteUser: (id) => req(`/users/${id}`, { method: 'DELETE' }),
+      getReviews: () => req('/reviews'),
+      submitReview: (d) => req('/reviews', { method: 'POST', body: JSON.stringify(d) }),
+      deleteReview: (id) => req(`/reviews/${id}`, { method: 'DELETE' }),
+      getPayments: () => req('/payments'),
+      getUserPayments: (uid) => req(`/payments/user/${uid}`),
+      processPayment: (d) => req('/payments', { method: 'POST', body: JSON.stringify(d) }),
+      getUserLibrary: (uid) => req(`/library/user/${uid}`),
+      getAllLibrary: () => req('/library'),
+      getAdminDashboard: () => req('/admin/dashboard'),
+      getSettings: () => req('/settings'),
+      updateSettings: (d) => req('/settings', { method: 'PUT', body: JSON.stringify(d) })
+    };
+
+    function App() {
+      const [splash, setSplash] = React.useState(true);
+      const [user, setUser] = React.useState(getSavedUser());
+      const [page, setPage] = React.useState('home');
+      const [games, setGames] = React.useState([]);
+      const [selectedGameId, setSelectedGameId] = React.useState(null);
+      const [toast, setToast] = React.useState(null);
+      const [theme, setTheme] = React.useState(() => localStorage.getItem('gamerig_theme') || 'dark');
+      const [siteSettings, setSiteSettings] = React.useState({
+        heroTitle: 'LEVEL UP YOUR DIGITAL LIBRARY',
+        heroSubtitle: 'Discover, explore and manage your favorite digital games with instant key delivery, payment checkout, and community review ratings.',
+        heroBadge: '🔥 NEXT-GEN DIGITAL GAME STORE',
+        announcementText: '🔥 SPRING SALE LIVE: Get up to 60% OFF select AAA titles & DLCs!',
+        showAnnouncement: true,
+        storeNotice: '🎮 Free Cloud Play & Instant Key Delivery included with all purchases'
+      });
+
+      React.useEffect(() => {
+        if (theme === 'light') {
+          document.body.classList.add('light-mode');
+        } else {
+          document.body.classList.remove('light-mode');
+        }
+        localStorage.setItem('gamerig_theme', theme);
+      }, [theme]);
+
+      const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+
+      React.useEffect(() => {
+        setTimeout(() => setSplash(false), 1800);
+        loadGames();
+        loadSettings();
+      }, []);
+
+      const loadGames = async () => {
+        try {
+          const data = await api.getGames();
+          setGames(data || []);
+        } catch (e) {}
+      };
+
+      const loadSettings = async () => {
+        try {
+          const data = await api.getSettings();
+          if (data && data.heroTitle) setSiteSettings(data);
+        } catch (e) {}
+      };
+
+      const showToast = (msg, type = 'success') => setToast({ msg, type });
+
+      const handleLogin = (u) => {
+        setUser(u);
+        setPage(u.role === 'admin' ? 'admin-dashboard' : 'home');
+        showToast(`Welcome back, ${u.name}!`);
+      };
+
+      const handleLogout = () => {
+        setAuthToken(null);
+        setSavedUser(null);
+        setUser(null);
+        setPage('home');
+        showToast('Logged out');
+      };
+
+      if (splash) {
+        return (
+          <div style={{ position: 'fixed', inset: 0, background: '#07090e', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 99999 }}>
+            <h1 style={{ fontSize: '3.5rem', color: '#fff', letterSpacing: '2px' }}>GAME<span style={{ color: '#00ff88' }}>RIG</span></h1>
+            <p style={{ color: '#94a3b8', letterSpacing: '3px', textTransform: 'uppercase', marginTop: '0.5rem' }}>Your Games. Your Library.</p>
+          </div>
+        );
+      }
+
+      if (!user) {
+        return <AuthScreen onLogin={handleLogin} />;
+      }
+
+      const isAdmin = user.role === 'admin';
+
+      return (
+        <div className="app-container">
+          {/* Top Announcement Banner (Editable by Admin) */}
+          {siteSettings.showAnnouncement && (
+            <div style={{ background: 'linear-gradient(90deg, #059669 0%, #10b981 50%, #00ff88 100%)', color: '#052e16', padding: '0.4rem 1rem', textAlign: 'center', fontWeight: 700, fontSize: '0.88rem', letterSpacing: '0.5px', boxShadow: '0 2px 10px rgba(0,255,136,0.2)' }}>
+              {siteSettings.announcementText}
+            </div>
+          )}
+
+          {/* Navbar */}
+          <nav style={{ background: 'rgba(7,9,14,0.9)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(255,255,255,0.08)', position: 'sticky', top: 0, zIndex: 1000, padding: '0.85rem 2rem' }}>
+            <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div onClick={() => setPage(isAdmin ? 'admin-dashboard' : 'home')} style={{ cursor: 'pointer', fontSize: '1.75rem', fontWeight: 800 }}>
+                GAME<span style={{ color: '#00ff88' }}>RIG</span>
+                {isAdmin && <span className="badge badge-green" style={{ marginLeft: '0.5rem' }}>ADMIN</span>}
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                {!isAdmin ? (
+                  <>
+                    <button onClick={() => setPage('home')} className={`btn ${page === 'home' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>Home</button>
+                    <button onClick={() => setPage('games')} className={`btn ${page === 'games' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>Games</button>
+                    <button onClick={() => setPage('library')} className={`btn ${page === 'library' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>My Library</button>
+                    <button onClick={() => setPage('community-reviews')} className={`btn ${page === 'community-reviews' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>Community Reviews</button>
+                    <button onClick={() => setPage('user-payments')} className={`btn ${page === 'user-payments' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>My Payments</button>
+                    <button onClick={() => setPage('profile')} className={`btn ${page === 'profile' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>Profile</button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => setPage('admin-dashboard')} className={`btn ${page.startsWith('admin') ? 'btn-primary' : 'btn-secondary'} btn-sm`}>🛡️ Admin Control Panel</button>
+                    <button onClick={() => setPage('home')} className={`btn ${page === 'home' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>🌐 Storefront Live View</button>
+                  </>
+                )}
+                <div onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} style={{ display: 'inline-flex', alignItems: 'center', width: '54px', height: '28px', borderRadius: '14px', background: theme === 'dark' ? '#1e293b' : '#cbd5e1', border: `1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.15)' : '#94a3b8'}`, padding: '2px', cursor: 'pointer', position: 'relative', transition: 'all 0.3s ease', userSelect: 'none', marginLeft: '0.5rem' }}>
+                  <span style={{ position: 'absolute', left: '5px', fontSize: '11px', lineHeight: 1 }}>☀️</span>
+                  <span style={{ position: 'absolute', right: '5px', fontSize: '11px', lineHeight: 1 }}>🌙</span>
+                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: theme === 'dark' ? '#00ff88' : '#059669', boxShadow: '0 2px 5px rgba(0,0,0,0.3)', transform: theme === 'dark' ? 'translateX(26px)' : 'translateX(0px)', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease', zIndex: 2 }} />
+                </div>
+                <button onClick={handleLogout} className="btn btn-danger btn-sm" style={{ marginLeft: '0.5rem' }}>Logout</button>
+              </div>
+            </div>
+          </nav>
+
+          <main className="main-content">
+            {page === 'home' && <HomeScreen games={games} onSelect={(id) => { setSelectedGameId(id); setPage('game-details'); }} onNav={setPage} siteSettings={siteSettings} />}
+            {page === 'games' && <GamesScreen games={games} onSelect={(id) => { setSelectedGameId(id); setPage('game-details'); }} />}
+            {page === 'game-details' && <GameDetailScreen gameId={selectedGameId} user={user} onNav={setPage} showToast={showToast} />}
+            {page === 'library' && <LibraryScreen user={user} onNav={setPage} onSelect={(id) => { setSelectedGameId(id); setPage('game-details'); }} />}
+            {page === 'community-reviews' && <CommunityReviewsScreen onSelect={(id) => { setSelectedGameId(id); setPage('game-details'); }} />}
+            {page === 'user-payments' && <UserPaymentsScreen user={user} onNav={setPage} />}
+            {page === 'profile' && <ProfileScreen user={user} showToast={showToast} setUser={setUser} />}
+
+            {isAdmin && page.startsWith('admin') && (
+              <AdminControlCenterScreen showToast={showToast} refreshGames={loadGames} siteSettings={siteSettings} setSiteSettings={setSiteSettings} onNav={setPage} reloadSettings={loadSettings} />
+            )}
+          </main>
+
+          {toast && <div className="toast-container"><div className="toast">{toast.msg}</div></div>}
+        </div>
+      );
+    }
+
+    function AuthScreen({ onLogin }) {
+      const [isReg, setIsReg] = React.useState(false);
+      const [email, setEmail] = React.useState('john@gamerig.com');
+      const [password, setPassword] = React.useState('password123');
+      const [name, setName] = React.useState('');
+      const [err, setErr] = React.useState('');
+
+      const submit = async (e) => {
+        e.preventDefault();
+        setErr('');
+        try {
+          if (isReg) {
+            const d = await api.register({ name, email, password });
+            setAuthToken(d.token); setSavedUser(d.user); onLogin(d.user);
+          } else {
+            const d = await api.login({ email, password });
+            setAuthToken(d.token); setSavedUser(d.user); onLogin(d.user);
+          }
+        } catch (error) { setErr(error.message); }
+      };
+
+      const instantDemo = async (demoEmail, demoPass) => {
+        setErr('');
+        try {
+          const d = await api.login({ email: demoEmail, password: demoPass });
+          setAuthToken(d.token); setSavedUser(d.user); onLogin(d.user);
+        } catch (error) { setErr(error.message); }
+      };
+
+      return (
+        <div style={{ minHeight: '100vh', background: 'radial-gradient(ellipse at top, #111827 0%, #07090e 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+          <div className="glass-panel" style={{ maxWidth: '440px', width: '100%', padding: '2.5rem 2rem', textAlign: 'center' }}>
+            <h1 style={{ fontSize: '2.2rem', color: '#fff', marginBottom: '0.25rem' }}>GAME<span style={{ color: '#00ff88' }}>RIG</span></h1>
+            <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '1.5rem' }}>{isReg ? 'Create Player Account' : 'Sign In to Digital Library'}</p>
+            
+            {err && <div style={{ padding: '0.75rem', background: 'rgba(239,68,68,0.15)', color: '#ef4444', borderRadius: '8px', marginBottom: '1rem' }}>{err}</div>}
+
+            {/* 1-Click Instant Demo Login Bar */}
+            <div style={{ marginBottom: '1.25rem', background: 'rgba(0, 255, 136, 0.08)', border: '1px dashed rgba(0, 255, 136, 0.3)', borderRadius: '10px', padding: '0.75rem' }}>
+              <span style={{ fontSize: '0.78rem', color: '#00ff88', display: 'block', marginBottom: '0.5rem', fontWeight: 700 }}>⚡ 1-CLICK INSTANT DEMO LOGIN</span>
+              <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button type="button" onClick={() => instantDemo('john@gamerig.com', 'password123')} className="btn btn-secondary btn-sm" style={{ fontSize: '0.78rem' }}>⚡ User Demo (John)</button>
+                <button type="button" onClick={() => instantDemo('prof@college.edu', 'password123')} className="btn btn-secondary btn-sm" style={{ fontSize: '0.78rem', borderColor: '#3b82f6', color: '#60a5fa' }}>🎓 Prof Demo</button>
+                <button type="button" onClick={() => instantDemo('admin@gamerig.com', 'password123')} className="btn btn-secondary btn-sm" style={{ fontSize: '0.78rem', borderColor: '#00ff88', color: '#00ff88' }}>🛡️ Admin Demo</button>
+              </div>
+            </div>
+
+            <form onSubmit={submit}>
+              {isReg && <div className="form-group"><input type="text" placeholder="Full Name" className="input-control" value={name} onChange={e=>setName(e.target.value)} required /></div>}
+              <div className="form-group"><input type="email" placeholder="Email" className="input-control" value={email} onChange={e=>setEmail(e.target.value)} required /></div>
+              <div className="form-group"><input type="password" placeholder="Password" className="input-control" value={password} onChange={e=>setPassword(e.target.value)} required /></div>
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '0.85rem' }}>{isReg ? 'Create Account' : 'Sign In'}</button>
+            </form>
+
+            <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
+              <button type="button" onClick={() => setIsReg(!isReg)} style={{ background: 'none', border: 'none', color: '#00ff88', cursor: 'pointer', fontWeight: 600 }}>
+                {isReg ? 'Already have an account? Sign In' : "Don't have an account? Register"}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function HomeScreen({ games, onSelect, onNav, siteSettings }) {
+      return (
+        <div>
+          <div className="glass-panel" style={{ padding: '3.5rem 2.5rem', borderRadius: '24px', marginBottom: '2rem', background: 'radial-gradient(ellipse at top right, rgba(0, 255, 136, 0.15) 0%, rgba(13, 17, 26, 0.95) 70%)' }}>
+            {siteSettings?.heroBadge && (
+              <span className="badge badge-green" style={{ marginBottom: '1rem', display: 'inline-block' }}>{siteSettings.heroBadge}</span>
+            )}
+            <h1 style={{ fontSize: '3.2rem', color: '#fff', lineHeight: 1.1, marginBottom: '1rem' }}>
+              {siteSettings?.heroTitle || 'LEVEL UP YOUR DIGITAL LIBRARY'}
+            </h1>
+            <p style={{ color: '#cbd5e1', fontSize: '1.1rem', marginBottom: '2rem', maxWidth: '650px', lineHeight: 1.6 }}>
+              {siteSettings?.heroSubtitle || 'Discover, explore and manage your favorite digital games with instant key delivery, payment checkout, and community review ratings.'}
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <button onClick={() => onNav('games')} className="btn btn-primary">Explore Games</button>
+              <button onClick={() => onNav('library')} className="btn btn-secondary">My Library</button>
+            </div>
+          </div>
+
+          {siteSettings?.storeNotice && (
+            <div style={{ background: 'rgba(0, 255, 136, 0.06)', border: '1px solid rgba(0, 255, 136, 0.2)', padding: '0.85rem 1.25rem', borderRadius: '12px', marginBottom: '2rem', color: 'var(--text-primary)', fontSize: '0.92rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {siteSettings.storeNotice}
+            </div>
+          )}
+
+          <h2 style={{ fontSize: '1.8rem', color: 'var(--text-primary)', marginBottom: '1.25rem' }}>FEATURED GAMES CATALOG</h2>
+          <div className="games-grid">
+            {games.map(g => (
+              <div key={g.game_id} className="game-card">
+                <div className="card-img-container" onClick={() => onSelect(g.game_id)} style={{ cursor: 'pointer' }} title={`Click to view ${g.title} details`}><img src={g.image || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80'} alt={g.title} /><span className="badge badge-green" style={{ position: 'absolute', top: '10px', right: '10px' }}>{g.genre}</span></div>
+                <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>{g.title}</h3>
+                  <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 800, color: '#00ff88', fontSize: '1.2rem' }}>{g.price === 0 ? 'FREE' : `$${Number(g.price).toFixed(2)}`}</span>
+                    <button onClick={() => onSelect(g.game_id)} className="btn btn-secondary btn-sm">View Details</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function GamesScreen({ games, onSelect }) {
+      const [search, setSearch] = React.useState('');
+      const [genreFilter, setGenreFilter] = React.useState('All');
+      const [sortBy, setSortBy] = React.useState('genre_asc');
+
+      const genresList = React.useMemo(() => {
+        const set = new Set();
+        games.forEach(g => { if (g.genre) set.add(g.genre); });
+        return ['All', ...Array.from(set).sort()];
+      }, [games]);
+
+      const filtered = React.useMemo(() => {
+        let result = [...games];
+        if (search.trim()) {
+          const q = search.toLowerCase();
+          result = result.filter(g => g.title.toLowerCase().includes(q) || g.genre.toLowerCase().includes(q));
+        }
+        if (genreFilter !== 'All') {
+          result = result.filter(g => g.genre.toLowerCase().includes(genreFilter.toLowerCase()));
+        }
+
+        if (sortBy === 'genre_asc') {
+          result.sort((a, b) => a.genre.localeCompare(b.genre));
+        } else if (sortBy === 'genre_desc') {
+          result.sort((a, b) => b.genre.localeCompare(a.genre));
+        } else if (sortBy === 'price_asc') {
+          result.sort((a, b) => a.price - b.price);
+        } else if (sortBy === 'price_desc') {
+          result.sort((a, b) => b.price - a.price);
+        } else if (sortBy === 'title') {
+          result.sort((a, b) => a.title.localeCompare(b.title));
+        }
+
+        return result;
+      }, [games, search, genreFilter, sortBy]);
+
+      return (
+        <div>
+          <h1 style={{ fontSize: '2.5rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>GAMES <span className="gradient-text">CATALOG</span></h1>
+          
+          {/* Search & Sort Toolbar */}
+          <div className="glass-panel" style={{ padding: '1.25rem', marginBottom: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <input type="text" placeholder="Search games catalog..." className="input-control" value={search} onChange={e=>setSearch(e.target.value)} style={{ flex: 1, minWidth: '220px' }} />
+            <select className="input-control" value={genreFilter} onChange={e=>setGenreFilter(e.target.value)} style={{ width: '180px' }}>
+              <option value="All">Filter Genre (All)</option>
+              {genresList.filter(g => g !== 'All').map(g => <option key={g} value={g}>{g}</option>)}
+            </select>
+            <select className="input-control" value={sortBy} onChange={e=>setSortBy(e.target.value)} style={{ width: '220px', borderColor: sortBy.startsWith('genre') ? '#00ff88' : 'var(--border-color)' }}>
+              <option value="genre_asc">🏷️ Sort by Genre (A - Z)</option>
+              <option value="genre_desc">🏷️ Sort by Genre (Z - A)</option>
+              <option value="price_asc">💵 Sort by Price (Low to High)</option>
+              <option value="price_desc">💵 Sort by Price (High to Low)</option>
+              <option value="title">🔤 Sort by Title (A - Z)</option>
+            </select>
+          </div>
+
+          {/* Quick Genre Pills Bar */}
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>QUICK GENRE:</span>
+            {genresList.map(g => (
+              <button key={g} onClick={() => setGenreFilter(g)} className={`badge ${genreFilter === g ? 'badge-green' : 'badge-gray'}`} style={{ cursor: 'pointer' }}>
+                {g}
+              </button>
+            ))}
+          </div>
+
+          <div className="games-grid">
+            {filtered.map(g => (
+              <div key={g.game_id} className="game-card">
+                <div className="card-img-container" onClick={() => onSelect(g.game_id)} style={{ cursor: 'pointer' }} title={`Click to view ${g.title} details`}>
+                  <img src={g.image || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80'} alt={g.title} />
+                  <span className="badge badge-green" style={{ position: 'absolute', top: '10px', right: '10px' }}>{g.genre}</span>
+                </div>
+                <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <h3 style={{ color: 'var(--text-primary)', fontSize: '1.1rem', marginBottom: '0.5rem' }}>{g.title}</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1rem' }}>{g.platform} • {g.release_date}</p>
+                  <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 800, color: '#00ff88' }}>{g.price === 0 ? 'FREE' : `$${Number(g.price).toFixed(2)}`}</span>
+                    <button onClick={() => onSelect(g.game_id)} className="btn btn-primary btn-sm">Details</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function GameDetailScreen({ gameId, user, onNav, showToast }) {
+      const [g, setG] = React.useState(null);
+      const [owned, setOwned] = React.useState(false);
+      const [showPay, setShowPay] = React.useState(false);
+      const [showRev, setShowRev] = React.useState(false);
+      const [revText, setRevText] = React.useState('');
+      const [rating, setRating] = React.useState(5);
+      const [method, setMethod] = React.useState('UPI');
+
+      React.useEffect(() => {
+        loadData();
+      }, [gameId]);
+
+      const loadData = async () => {
+        const data = await api.getGame(gameId);
+        setG(data);
+        const lib = await api.getUserLibrary(user.id);
+        setOwned(lib.some(i => i.game_id == gameId));
+      };
+
+      const handlePay = async () => {
+        await api.processPayment({ game_id: g.game_id, amount: g.price, payment_method: method, payment_status: 'Completed' });
+        showToast(`Purchased ${g.title} via ${method}!`);
+        setShowPay(false);
+        onNav('library');
+      };
+
+      const handleReview = async () => {
+        await api.submitReview({ game_id: g.game_id, rating, review_text: revText });
+        showToast('Review submitted!');
+        setShowRev(false);
+        loadData();
+      };
+
+      if (!g) return <div>Loading...</div>;
+
+      return (
+        <div>
+          <button onClick={() => onNav('games')} className="btn btn-secondary btn-sm" style={{ marginBottom: '1rem' }}>← Back to Catalog</button>
+          <div className="glass-panel" style={{ padding: '2rem', borderRadius: '20px', marginBottom: '2rem' }}>
+            <h1 style={{ fontSize: '2.5rem', color: '#fff' }}>{g.title}</h1>
+            <p style={{ color: '#00ff88', fontWeight: 600, margin: '0.5rem 0 1rem 0' }}>{g.genre} • {g.platform}</p>
+            <p style={{ color: '#cbd5e1', lineHeight: 1.6, marginBottom: '1.5rem' }}>{g.description}</p>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <span style={{ fontSize: '2rem', fontWeight: 800, color: '#00ff88' }}>{g.price === 0 ? 'FREE' : `$${Number(g.price).toFixed(2)}`}</span>
+              {owned ? <span className="badge badge-green">Owned In Library</span> : <button onClick={() => setShowPay(true)} className="btn btn-primary">Buy Game Now</button>}
+              <button onClick={() => setShowRev(true)} className="btn btn-secondary">Write Review</button>
+            </div>
+          </div>
+
+          {/* Payment Checkout Modal with Multiple Methods */}
+          {showPay && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <h2 style={{ color: '#fff', marginBottom: '0.5rem' }}>CHECKOUT PAYMENT GATEWAY</h2>
+                <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>{g.title} — ${Number(g.price).toFixed(2)}</p>
+                
+                <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                  <label>Select Payment Method</label>
+                  <select className="input-control" value={method} onChange={e=>setMethod(e.target.value)}>
+                    <option value="UPI">UPI / QR Code (GPay, PhonePe, Paytm)</option>
+                    <option value="Credit Card">Credit Card (Visa, MasterCard, Amex)</option>
+                    <option value="Debit Card">Debit Card</option>
+                    <option value="Net Banking">Net Banking (HDFC, SBI, ICICI, Axis)</option>
+                    <option value="Wallet">Mobile Wallet (Paytm, Amazon Pay)</option>
+                    <option value="Pay Later">Pay Later / EMI (LazyPay, ZestMoney)</option>
+                    <option value="Gift Card">GameRig Gift Card / Voucher</option>
+                  </select>
+                </div>
+
+                <button onClick={handlePay} className="btn btn-primary" style={{ width: '100%' }}>Pay ${Number(g.price).toFixed(2)} via {method}</button>
+                <button onClick={() => setShowPay(false)} className="btn btn-secondary" style={{ width: '100%', marginTop: '0.5rem' }}>Cancel</button>
+              </div>
+            </div>
+          )}
+
+          {/* Review Modal */}
+          {showRev && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <h2 style={{ color: '#fff', marginBottom: '1rem' }}>WRITE A REVIEW</h2>
+                <div className="form-group">
+                  <label>Rating (1-5)</label>
+                  <select className="input-control" value={rating} onChange={e=>setRating(e.target.value)}>
+                    <option value="5">5 Stars</option><option value="4">4 Stars</option><option value="3">3 Stars</option><option value="2">2 Stars</option><option value="1">1 Star</option>
+                  </select>
+                </div>
+                <div className="form-group"><textarea className="input-control" placeholder="Review comment..." value={revText} onChange={e=>setRevText(e.target.value)}></textarea></div>
+                <button onClick={handleReview} className="btn btn-primary" style={{ width: '100%' }}>Submit Review</button>
+                <button onClick={() => setShowRev(false)} className="btn btn-secondary" style={{ width: '100%', marginTop: '0.5rem' }}>Cancel</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function CommunityReviewsScreen({ onSelect }) {
+      const [list, setList] = React.useState([]);
+      const [search, setSearch] = React.useState('');
+      const [ratingFilter, setRatingFilter] = React.useState('All');
+      const [reactions, setReactions] = React.useState(() => {
+        const saved = localStorage.getItem('gamerig_review_reactions');
+        return saved ? JSON.parse(saved) : {};
+      });
+
+      React.useEffect(() => {
+        api.getReviews().then(setList);
+      }, []);
+
+      const handleReact = (id, type) => {
+        setReactions(prev => {
+          const rState = prev[id] || { fire: 3, like: 5, heart: 2, gamer: 4, funny: 1, userReacted: {} };
+          const hasReacted = rState.userReacted?.[type];
+          const delta = hasReacted ? -1 : 1;
+          const updated = {
+            ...prev,
+            [id]: {
+              ...rState,
+              [type]: Math.max(0, (rState[type] || 0) + delta),
+              userReacted: { ...(rState.userReacted || {}), [type]: !hasReacted }
+            }
+          };
+          localStorage.setItem('gamerig_review_reactions', JSON.stringify(updated));
+          return updated;
+        });
+      };
+
+      const filtered = list.filter(r => {
+        const matchesRating = ratingFilter === 'All' || Number(r.rating) === Number(ratingFilter);
+        const matchesSearch = !search.trim() || 
+          (r.game_title && r.game_title.toLowerCase().includes(search.toLowerCase())) ||
+          (r.user_name && r.user_name.toLowerCase().includes(search.toLowerCase())) ||
+          (r.review_text && r.review_text.toLowerCase().includes(search.toLowerCase()));
+        return matchesRating && matchesSearch;
+      });
+
+      const emojis = [
+        { type: 'fire', icon: '🔥', label: 'Hot' },
+        { type: 'like', icon: '👍', label: 'Helpful' },
+        { type: 'heart', icon: '❤️', label: 'Love' },
+        { type: 'gamer', icon: '🕹️', label: 'Gamer' },
+        { type: 'funny', icon: '😂', label: 'Funny' }
+      ];
+
+      return (
+        <div>
+          <h1 style={{ fontSize: '2.5rem', color: '#fff', marginBottom: '0.5rem' }}>COMMUNITY <span className="gradient-text">REVIEWS & FEEDBACK</span></h1>
+          <p style={{ color: '#94a3b8', marginBottom: '1.5rem' }}>Read ratings and player feedback across all games, and react with emojis.</p>
+
+          {/* Filter Bar */}
+          <div className="glass-panel" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <input type="text" placeholder="Search reviews by game, user, or comment..." className="input-control" value={search} onChange={e=>setSearch(e.target.value)} style={{ flex: 1, minWidth: '220px' }} />
+            <select className="input-control" value={ratingFilter} onChange={e=>setRatingFilter(e.target.value)} style={{ width: '160px' }}>
+              <option value="All">All Ratings</option>
+              <option value="5">5 Stars ⭐⭐⭐⭐⭐</option>
+              <option value="4">4 Stars ⭐⭐⭐⭐</option>
+              <option value="3">3 Stars ⭐⭐⭐</option>
+              <option value="2">2 Stars ⭐⭐</option>
+              <option value="1">1 Star ⭐</option>
+            </select>
+          </div>
+
+          {/* Reviews List */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {filtered.map(r => {
+              const rState = reactions[r.review_id] || { fire: 2 + (r.review_id % 3), like: 4 + (r.review_id % 4), heart: 2, gamer: 3, funny: r.review_id % 2, userReacted: {} };
+              return (
+                <div key={r.review_id} className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <div>
+                      <h4 style={{ fontSize: '1.1rem', color: '#fff' }}>{r.user_name || 'Gamer'}</h4>
+                      <span style={{ color: '#00ff88', fontWeight: 600, fontSize: '0.9rem' }}>🎮 {r.game_title}</span>
+                      <span style={{ color: '#64748b', fontSize: '0.8rem', marginLeft: '0.5rem' }}>• {r.review_date}</span>
+                    </div>
+                    <div style={{ background: 'rgba(255,255,255,0.04)', padding: '0.35rem 0.65rem', borderRadius: '8px', border: '1px solid var(--border-color)', fontWeight: 700, color: '#00ff88' }}>
+                      {'⭐'.repeat(r.rating)} {r.rating}.0
+                    </div>
+                  </div>
+
+                  <p style={{ color: '#cbd5e1', fontSize: '1rem', lineHeight: 1.5, marginBottom: '1rem' }}>"{r.review_text}"</p>
+
+                  {/* Emoji Reactions Bar */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem' }}>
+                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600, marginRight: '0.2rem' }}>REACT:</span>
+                      {emojis.map(e => {
+                        const count = rState[e.type] || 0;
+                        const active = rState.userReacted?.[e.type];
+                        return (
+                          <button key={e.type} onClick={() => handleReact(r.review_id, e.type)} className={`emoji-btn ${active ? 'active' : ''}`}>
+                            <span>{e.icon}</span> <strong>{count}</strong>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <button onClick={() => onSelect(r.game_id)} className="btn btn-secondary btn-sm">View Game ↗</button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    function LibraryScreen({ user, onNav, onSelect }) {
+      const [items, setItems] = React.useState([]);
+
+      React.useEffect(() => {
+        api.getUserLibrary(user.id).then(setItems);
+      }, [user]);
+
+      return (
+        <div>
+          <h1 style={{ fontSize: '2.5rem', color: '#fff', marginBottom: '1rem' }}>MY GAME <span className="gradient-text">LIBRARY</span></h1>
+          {items.length > 0 ? (
+            <div className="games-grid">
+              {items.map(i => (
+                <div key={i.library_id} className="game-card">
+                  <div style={{ padding: '1.25rem' }}>
+                    <span className="badge badge-green" style={{ marginBottom: '0.5rem' }}>Owned</span>
+                    <h3 style={{ color: '#fff', marginBottom: '0.5rem' }}>{i.game_title}</h3>
+                    <p style={{ color: '#94a3b8', fontSize: '0.85rem' }}>Purchased: {i.purchase_date}</p>
+                    <button onClick={() => alert(`Launching ${i.game_title}...`)} className="btn btn-primary btn-sm" style={{ width: '100%', marginTop: '1rem' }}>Launch Game</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center' }}>
+              <h2>Your library is empty</h2>
+              <button onClick={() => onNav('games')} className="btn btn-primary" style={{ marginTop: '1rem' }}>Explore Catalog</button>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function UserPaymentsScreen({ user, onNav }) {
+      const [list, setList] = React.useState([]);
+      const [inv, setInv] = React.useState(null);
+
+      React.useEffect(() => {
+        api.getUserPayments(user.id).then(setList);
+      }, [user]);
+
+      return (
+        <div>
+          <h1 style={{ fontSize: '2.5rem', color: '#fff', marginBottom: '1rem' }}>MY PAYMENT <span className="gradient-text">TRANSACTIONS</span></h1>
+          {list.length > 0 ? (
+            <div className="table-responsive">
+              <table className="data-table">
+                <thead><tr><th>ID</th><th>Game Title</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th><th>Receipt</th></tr></thead>
+                <tbody>
+                  {list.map(p => (
+                    <tr key={p.payment_id}>
+                      <td>#{p.payment_id}</td><td style={{ color: '#fff', fontWeight: 600 }}>{p.game_title}</td>
+                      <td style={{ color: '#00ff88', fontWeight: 700 }}>${p.amount}</td><td>{p.payment_method}</td>
+                      <td><span className="badge badge-green">{p.payment_status}</span></td><td>{p.payment_date}</td>
+                      <td><button onClick={() => setInv(p)} className="btn btn-secondary btn-sm">Receipt</button></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center' }}>
+              <h2>No Payment History</h2>
+              <button onClick={() => onNav('games')} className="btn btn-primary" style={{ marginTop: '1rem' }}>Explore Games</button>
+            </div>
+          )}
+
+          {inv && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <h2 style={{ color: '#fff', marginBottom: '1rem' }}>PURCHASE INVOICE RECEIPT</h2>
+                <p style={{ color: '#94a3b8' }}>Game: <strong style={{ color: '#fff' }}>{inv.game_title}</strong></p>
+                <p style={{ color: '#94a3b8' }}>Amount: <strong style={{ color: '#00ff88' }}>${inv.amount}</strong></p>
+                <p style={{ color: '#94a3b8' }}>Method: <strong>{inv.payment_method}</strong></p>
+                <p style={{ color: '#94a3b8' }}>Date: <strong>{inv.payment_date}</strong></p>
+                <button onClick={() => setInv(null)} className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>Close</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function ProfileScreen({ user, showToast, setUser }) {
+      const [p, setP] = React.useState(null);
+      const [name, setName] = React.useState('');
+      const [phone, setPhone] = React.useState('');
+
+      React.useEffect(() => {
+        api.getUser(user.id).then(d => { setP(d); setName(d.name); setPhone(d.phone || ''); });
+      }, [user]);
+
+      const save = async (e) => {
+        e.preventDefault();
+        await api.updateUser(user.id, { name, phone });
+        const updated = { ...user, name, phone };
+        setSavedUser(updated); setUser(updated);
+        showToast('Profile updated');
+      };
+
+      if (!p) return <div>Loading...</div>;
+
+      return (
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+          <h1 style={{ fontSize: '2.2rem', color: '#fff', marginBottom: '1rem' }}>USER PROFILE</h1>
+          <div className="glass-panel" style={{ padding: '2rem' }}>
+            <form onSubmit={save}>
+              <div className="form-group"><label>Full Name</label><input type="text" className="input-control" value={name} onChange={e=>setName(e.target.value)} /></div>
+              <div className="form-group"><label>Phone</label><input type="text" className="input-control" value={phone} onChange={e=>setPhone(e.target.value)} /></div>
+              <button type="submit" className="btn btn-primary" style={{ marginTop: '1rem' }}>Save Profile</button>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    function AdminControlCenterScreen({ showToast, refreshGames, siteSettings, setSiteSettings, onNav, reloadSettings }) {
+      const [tab, setTab] = React.useState('dashboard');
+      const [stats, setStats] = React.useState(null);
+      const [gamesList, setGamesList] = React.useState([]);
+      const [usersList, setUsersList] = React.useState([]);
+      const [reviewsList, setReviewsList] = React.useState([]);
+      const [paymentsList, setPaymentsList] = React.useState([]);
+      const [libraryList, setLibraryList] = React.useState([]);
+
+      // Search & Modals for Games
+      const [gameSearch, setGameSearch] = React.useState('');
+      const [showAddModal, setShowAddModal] = React.useState(false);
+      const [editingGame, setEditingGame] = React.useState(null);
+
+      // Add Game Form
+      const [newGameForm, setNewGameForm] = React.useState({
+        title: '', genre: 'Action RPG', price: '49.99', platform: 'PC / PS5 / Xbox', release_date: new Date().toISOString().split('T')[0], image: '', description: ''
+      });
+
+      // Edit Game Form
+      const [editGameForm, setEditGameForm] = React.useState({
+        title: '', genre: '', price: '', platform: '', release_date: '', image: '', description: ''
+      });
+
+      // Website Customizer Form
+      const [customizerForm, setCustomizerForm] = React.useState({
+        heroBadge: siteSettings?.heroBadge || '🔥 NEXT-GEN DIGITAL GAME STORE',
+        heroTitle: siteSettings?.heroTitle || 'LEVEL UP YOUR DIGITAL LIBRARY',
+        heroSubtitle: siteSettings?.heroSubtitle || 'Discover, explore and manage your favorite digital games with instant key delivery, payment checkout, and community review ratings.',
+        announcementText: siteSettings?.announcementText || '🔥 SPRING SALE LIVE: Get up to 60% OFF select AAA titles & DLCs!',
+        showAnnouncement: siteSettings?.showAnnouncement !== undefined ? siteSettings.showAnnouncement : true,
+        storeNotice: siteSettings?.storeNotice || '🎮 Free Cloud Play & Instant Key Delivery included with all purchases'
+      });
+
+      React.useEffect(() => {
+        loadAllData();
+      }, []);
+
+      React.useEffect(() => {
+        if (siteSettings) {
+          setCustomizerForm({
+            heroBadge: siteSettings.heroBadge || '',
+            heroTitle: siteSettings.heroTitle || '',
+            heroSubtitle: siteSettings.heroSubtitle || '',
+            announcementText: siteSettings.announcementText || '',
+            showAnnouncement: Boolean(siteSettings.showAnnouncement),
+            storeNotice: siteSettings.storeNotice || ''
+          });
+        }
+      }, [siteSettings]);
+
+      const loadAllData = () => {
+        api.getAdminDashboard().then(setStats).catch(()=>{});
+        api.getGames().then(setGamesList).catch(()=>{});
+        api.getUsers().then(setUsersList).catch(()=>{});
+        api.getReviews().then(setReviewsList).catch(()=>{});
+        api.getPayments().then(setPaymentsList).catch(()=>{});
+        api.getAllLibrary().then(setLibraryList).catch(()=>{});
+      };
+
+      // Handle Add Game
+      const handleCreateGame = async (e) => {
+        e.preventDefault();
+        try {
+          await api.createGame(newGameForm);
+          showToast(`Game "${newGameForm.title}" added to store catalog!`);
+          setShowAddModal(false);
+          setNewGameForm({ title: '', genre: 'Action RPG', price: '49.99', platform: 'PC / PS5 / Xbox', release_date: new Date().toISOString().split('T')[0], image: '', description: '' });
+          loadAllData();
+          refreshGames();
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      };
+
+      // Handle Edit Game Open
+      const openEditModal = (game) => {
+        setEditingGame(game);
+        setEditGameForm({
+          title: game.title,
+          genre: game.genre,
+          price: game.price,
+          platform: game.platform,
+          release_date: game.release_date || '',
+          image: game.image || '',
+          description: game.description || ''
+        });
+      };
+
+      // Handle Update Game Save
+      const handleUpdateGame = async (e) => {
+        e.preventDefault();
+        try {
+          await api.updateGame(editingGame.game_id, editGameForm);
+          showToast(`Game "${editGameForm.title}" updated successfully!`);
+          setEditingGame(null);
+          loadAllData();
+          refreshGames();
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      };
+
+      // Handle Delete Game
+      const handleDeleteGame = async (id, title) => {
+        if (window.confirm(`Are you sure you want to delete "${title}"?`)) {
+          await api.deleteGame(id);
+          showToast(`Game "${title}" deleted`);
+          loadAllData();
+          refreshGames();
+        }
+      };
+
+      // Handle Save Customizer
+      const handleSaveCustomizer = async (e) => {
+        e.preventDefault();
+        try {
+          await api.updateSettings(customizerForm);
+          setSiteSettings(customizerForm);
+          showToast('Website content & settings updated live!');
+          if (reloadSettings) reloadSettings();
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      };
+
+      // Handle Delete User
+      const handleDeleteUser = async (id, name) => {
+        if (window.confirm(`Are you sure you want to delete user account "${name}"?`)) {
+          await api.deleteUser(id);
+          showToast(`User account deleted`);
+          loadAllData();
+        }
+      };
+
+      // Handle Delete Review
+      const handleDeleteReview = async (id) => {
+        await api.deleteReview(id);
+        showToast('Review deleted');
+        loadAllData();
+      };
+
+      // Filtered Games in Admin
+      const filteredAdminGames = gamesList.filter(g => 
+        g.title.toLowerCase().includes(gameSearch.toLowerCase()) || 
+        g.genre.toLowerCase().includes(gameSearch.toLowerCase())
+      );
+
+      return (
+        <div>
+          {/* Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div>
+              <h1 style={{ fontSize: '2.5rem', color: 'var(--text-primary)', margin: 0 }}>
+                ADMIN <span className="gradient-text">CONTROL CENTER</span>
+              </h1>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginTop: '0.25rem' }}>
+                Simple, centralized system management & live website content editor
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <button onClick={() => setShowAddModal(true)} className="btn btn-primary btn-sm">
+                ➕ Add New Game
+              </button>
+              <button onClick={() => setTab('customizer')} className="btn btn-secondary btn-sm" style={{ borderColor: '#00ff88', color: '#00ff88' }}>
+                ⚙️ Customize Website
+              </button>
+            </div>
+          </div>
+
+          {/* Unified Sub-Navigation Tabs */}
+          <div className="glass-panel" style={{ padding: '0.5rem', borderRadius: '14px', display: 'flex', gap: '0.4rem', overflowX: 'auto', marginBottom: '2rem' }}>
+            <button onClick={() => setTab('dashboard')} className={`btn ${tab === 'dashboard' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>📊 Overview</button>
+            <button onClick={() => setTab('games')} className={`btn ${tab === 'games' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>🎮 Manage Games ({gamesList.length})</button>
+            <button onClick={() => setTab('customizer')} className={`btn ${tab === 'customizer' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>⚙️ Edit Website Content</button>
+            <button onClick={() => setTab('users')} className={`btn ${tab === 'users' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>👥 Manage Users ({usersList.length})</button>
+            <button onClick={() => setTab('reviews')} className={`btn ${tab === 'reviews' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>💬 Reviews ({reviewsList.length})</button>
+            <button onClick={() => setTab('payments')} className={`btn ${tab === 'payments' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>💳 Payments</button>
+            <button onClick={() => setTab('library')} className={`btn ${tab === 'library' ? 'btn-primary' : 'btn-secondary'} btn-sm`}>📚 Library Records</button>
+          </div>
+
+          {/* TAB 1: OVERVIEW & ANALYTICS */}
+          {tab === 'dashboard' && (
+            <div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
+                <div className="glass-panel" onClick={() => setTab('users')} style={{ padding: '1.5rem', cursor: 'pointer', borderLeft: '4px solid #3b82f6' }}>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}>TOTAL USERS</span>
+                  <h2 style={{ fontSize: '2.5rem', color: 'var(--text-primary)', marginTop: '0.5rem' }}>{stats?.total_users || usersList.length}</h2>
+                  <span style={{ color: '#3b82f6', fontSize: '0.8rem' }}>View User Accounts ↗</span>
+                </div>
+                <div className="glass-panel" onClick={() => setTab('games')} style={{ padding: '1.5rem', cursor: 'pointer', borderLeft: '4px solid #00ff88' }}>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}>GAMES IN CATALOG</span>
+                  <h2 style={{ fontSize: '2.5rem', color: '#00ff88', marginTop: '0.5rem' }}>{stats?.total_games || gamesList.length}</h2>
+                  <span style={{ color: '#00ff88', fontSize: '0.8rem' }}>Manage & Edit Games ↗</span>
+                </div>
+                <div className="glass-panel" onClick={() => setTab('reviews')} style={{ padding: '1.5rem', cursor: 'pointer', borderLeft: '4px solid #f59e0b' }}>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}>COMMUNITY REVIEWS</span>
+                  <h2 style={{ fontSize: '2.5rem', color: '#f59e0b', marginTop: '0.5rem' }}>{stats?.total_reviews || reviewsList.length}</h2>
+                  <span style={{ color: '#f59e0b', fontSize: '0.8rem' }}>Moderate Reviews ↗</span>
+                </div>
+                <div className="glass-panel" onClick={() => setTab('payments')} style={{ padding: '1.5rem', cursor: 'pointer', borderLeft: '4px solid #10b981' }}>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}>TOTAL STORE REVENUE</span>
+                  <h2 style={{ fontSize: '2.5rem', color: '#10b981', marginTop: '0.5rem' }}>${stats?.total_revenue || '0.00'}</h2>
+                  <span style={{ color: '#10b981', fontSize: '0.8rem' }}>View Payment Log ↗</span>
+                </div>
+              </div>
+
+              {/* Quick Actions Bar */}
+              <div className="glass-panel" style={{ padding: '2rem', borderRadius: '20px' }}>
+                <h3 style={{ fontSize: '1.3rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>⚡ Quick Admin Actions</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+                  <button onClick={() => setShowAddModal(true)} className="btn btn-primary" style={{ padding: '1rem', justifyContent: 'flex-start' }}>
+                    <span>➕</span> <div><strong>Add New Game</strong><div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Publish new title to catalog</div></div>
+                  </button>
+                  <button onClick={() => setTab('customizer')} className="btn btn-secondary" style={{ padding: '1rem', justifyContent: 'flex-start', borderColor: '#00ff88' }}>
+                    <span>🖼️</span> <div><strong>Edit Storefront Banner</strong><div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Update Hero headline & text</div></div>
+                  </button>
+                  <button onClick={() => onNav('home')} className="btn btn-secondary" style={{ padding: '1rem', justifyContent: 'flex-start' }}>
+                    <span>🌐</span> <div><strong>Preview Live Website</strong><div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Check changes on live store</div></div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: MANAGE & EDIT GAMES */}
+          {tab === 'games' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <input 
+                  type="text" 
+                  placeholder="🔍 Search admin catalog by title or genre..." 
+                  className="input-control" 
+                  value={gameSearch} 
+                  onChange={e => setGameSearch(e.target.value)} 
+                  style={{ maxWidth: '380px' }}
+                />
+                <button onClick={() => setShowAddModal(true)} className="btn btn-primary">
+                  ➕ Add New Game
+                </button>
+              </div>
+
+              <div className="table-responsive">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Cover</th>
+                      <th>ID</th>
+                      <th>Title</th>
+                      <th>Genre</th>
+                      <th>Price</th>
+                      <th>Platform</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredAdminGames.map(g => (
+                      <tr key={g.game_id}>
+                        <td>
+                          <img src={g.image || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80'} alt={g.title} style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '8px' }} />
+                        </td>
+                        <td>#{g.game_id}</td>
+                        <td style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{g.title}</td>
+                        <td><span className="badge badge-green">{g.genre}</span></td>
+                        <td style={{ fontWeight: 800, color: '#00ff88' }}>{g.price === 0 ? 'FREE' : `$${Number(g.price).toFixed(2)}`}</td>
+                        <td style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{g.platform}</td>
+                        <td>
+                          <div style={{ display: 'flex', gap: '0.4rem' }}>
+                            <button onClick={() => openEditModal(g)} className="btn btn-secondary btn-sm" style={{ borderColor: '#00ff88', color: '#00ff88' }}>✏️ Edit</button>
+                            <button onClick={() => handleDeleteGame(g.game_id, g.title)} className="btn btn-danger btn-sm">🗑️ Delete</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: WEBSITE CUSTOMIZER (EDIT HERO BANNER, ANNOUNCEMENT, NOTICE) */}
+          {tab === 'customizer' && (
+            <div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', flexWrap: 'wrap' }}>
+                {/* Form Column */}
+                <div className="glass-panel" style={{ padding: '2rem', borderRadius: '20px' }}>
+                  <h2 style={{ fontSize: '1.5rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>⚙️ Website Content Customizer</h2>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginBottom: '1.5rem' }}>
+                    Edit the main homepage Hero Banner, text headlines, top announcement bar, and store notice banner in real-time.
+                  </p>
+
+                  <form onSubmit={handleSaveCustomizer}>
+                    <div className="form-group">
+                      <label>Hero Badge Tagline</label>
+                      <input type="text" className="input-control" value={customizerForm.heroBadge} onChange={e => setCustomizerForm({ ...customizerForm, heroBadge: e.target.value })} placeholder="e.g. 🔥 NEXT-GEN DIGITAL GAME STORE" />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Hero Main Headline</label>
+                      <input type="text" className="input-control" value={customizerForm.heroTitle} onChange={e => setCustomizerForm({ ...customizerForm, heroTitle: e.target.value })} placeholder="e.g. LEVEL UP YOUR DIGITAL LIBRARY" />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Hero Subtitle Description</label>
+                      <textarea className="input-control" rows="3" value={customizerForm.heroSubtitle} onChange={e => setCustomizerForm({ ...customizerForm, heroSubtitle: e.target.value })} placeholder="Write subtitle text..." />
+                    </div>
+
+                    <div className="form-group" style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--text-primary)', fontWeight: 600 }}>
+                        <input type="checkbox" checked={customizerForm.showAnnouncement} onChange={e => setCustomizerForm({ ...customizerForm, showAnnouncement: e.target.checked })} style={{ width: '18px', height: '18px', accentColor: '#00ff88' }} />
+                        Enable Top Announcement Banner
+                      </label>
+                    </div>
+
+                    {customizerForm.showAnnouncement && (
+                      <div className="form-group">
+                        <label>Announcement Banner Text</label>
+                        <input type="text" className="input-control" value={customizerForm.announcementText} onChange={e => setCustomizerForm({ ...customizerForm, announcementText: e.target.value })} placeholder="e.g. 🔥 SPRING SALE LIVE: Get up to 60% OFF AAA titles!" />
+                      </div>
+                    )}
+
+                    <div className="form-group" style={{ marginTop: '1rem' }}>
+                      <label>Catalog Store Notice Banner</label>
+                      <input type="text" className="input-control" value={customizerForm.storeNotice} onChange={e => setCustomizerForm({ ...customizerForm, storeNotice: e.target.value })} placeholder="e.g. 🎮 Free Cloud Play included with all purchases" />
+                    </div>
+
+                    <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem', padding: '0.85rem' }}>
+                      💾 Save Website Customizations
+                    </button>
+                  </form>
+                </div>
+
+                {/* Live Preview Column */}
+                <div>
+                  <h3 style={{ fontSize: '1.2rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>👁️ Live Storefront Visual Preview</h3>
+                  
+                  {/* Announcement Preview */}
+                  {customizerForm.showAnnouncement && (
+                    <div style={{ background: 'linear-gradient(90deg, #059669 0%, #10b981 50%, #00ff88 100%)', color: '#052e16', padding: '0.4rem 1rem', textAlign: 'center', fontWeight: 700, fontSize: '0.85rem', borderRadius: '8px', marginBottom: '1rem' }}>
+                      {customizerForm.announcementText || 'Announcement text preview...'}
+                    </div>
+                  )}
+
+                  {/* Hero Preview Card */}
+                  <div className="glass-panel" style={{ padding: '2.5rem 2rem', borderRadius: '20px', background: 'radial-gradient(ellipse at top right, rgba(0, 255, 136, 0.15) 0%, rgba(13, 17, 26, 0.95) 70%)', marginBottom: '1rem' }}>
+                    {customizerForm.heroBadge && (
+                      <span className="badge badge-green" style={{ marginBottom: '0.75rem', display: 'inline-block' }}>{customizerForm.heroBadge}</span>
+                    )}
+                    <h2 style={{ fontSize: '2.2rem', color: '#fff', lineHeight: 1.1, marginBottom: '0.75rem' }}>
+                      {customizerForm.heroTitle || 'Main Headline Preview'}
+                    </h2>
+                    <p style={{ color: '#cbd5e1', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '1.5rem' }}>
+                      {customizerForm.heroSubtitle || 'Subtitle text preview...'}
+                    </p>
+                    <div style={{ display: 'flex', gap: '0.75rem' }}>
+                      <button className="btn btn-primary btn-sm">Explore Games</button>
+                      <button className="btn btn-secondary btn-sm">My Library</button>
+                    </div>
+                  </div>
+
+                  {/* Store Notice Preview */}
+                  {customizerForm.storeNotice && (
+                    <div style={{ background: 'rgba(0, 255, 136, 0.06)', border: '1px solid rgba(0, 255, 136, 0.2)', padding: '0.75rem 1rem', borderRadius: '12px', color: 'var(--text-primary)', fontSize: '0.85rem' }}>
+                      {customizerForm.storeNotice}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: USERS MANAGEMENT */}
+          {tab === 'users' && (
+            <div>
+              <h2 style={{ fontSize: '1.5rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>👥 User Account Management</h2>
+              <div className="table-responsive">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Date Joined</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {usersList.map(u => (
+                      <tr key={u.user_id}>
+                        <td>#{u.user_id}</td>
+                        <td style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{u.name}</td>
+                        <td>{u.email}</td>
+                        <td>{u.phone || 'N/A'}</td>
+                        <td>{u.date_joined || 'Recent'}</td>
+                        <td>
+                          <button onClick={() => handleDeleteUser(u.user_id, u.name)} className="btn btn-danger btn-sm">
+                            🗑️ Delete Account
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: REVIEWS MODERATION */}
+          {tab === 'reviews' && (
+            <div>
+              <h2 style={{ fontSize: '1.5rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>💬 Review Moderation Log</h2>
+              <div className="table-responsive">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Game</th>
+                      <th>User</th>
+                      <th>Rating</th>
+                      <th>Review Comment</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {reviewsList.map(r => (
+                      <tr key={r.review_id}>
+                        <td>#{r.review_id}</td>
+                        <td style={{ fontWeight: 700, color: '#00ff88' }}>{r.game_title || `Game #${r.game_id}`}</td>
+                        <td>{r.user_name || `User #${r.user_id}`}</td>
+                        <td style={{ fontWeight: 700, color: '#f59e0b' }}>{'⭐'.repeat(r.rating)} {r.rating}.0</td>
+                        <td style={{ maxWidth: '350px', color: 'var(--text-primary)' }}>"{r.review_text}"</td>
+                        <td>
+                          <button onClick={() => handleDeleteReview(r.review_id)} className="btn btn-danger btn-sm">
+                            🗑️ Delete Review
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: PAYMENTS LOG */}
+          {tab === 'payments' && (
+            <div>
+              <h2 style={{ fontSize: '1.5rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>💳 Store Payment Transactions</h2>
+              <div className="table-responsive">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>User</th>
+                      <th>Game Title</th>
+                      <th>Amount</th>
+                      <th>Method</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paymentsList.map(p => (
+                      <tr key={p.payment_id}>
+                        <td>#{p.payment_id}</td>
+                        <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{p.user_name || `User #${p.user_id}`}</td>
+                        <td style={{ color: '#00ff88', fontWeight: 600 }}>{p.game_title || `Game #${p.game_id}`}</td>
+                        <td style={{ fontWeight: 800, color: '#00ff88' }}>${Number(p.amount).toFixed(2)}</td>
+                        <td>{p.payment_method}</td>
+                        <td><span className="badge badge-green">{p.payment_status}</span></td>
+                        <td>{p.payment_date}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 7: LIBRARY RECORDS */}
+          {tab === 'library' && (
+            <div>
+              <h2 style={{ fontSize: '1.5rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>📚 User Game Library Entitlements</h2>
+              <div className="table-responsive">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>User</th>
+                      <th>Game Title</th>
+                      <th>Purchase Date</th>
+                      <th>Entitlement Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {libraryList.map(l => (
+                      <tr key={l.library_id}>
+                        <td>#{l.library_id}</td>
+                        <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{l.user_name || `User #${l.user_id}`}</td>
+                        <td style={{ color: '#00ff88', fontWeight: 600 }}>{l.game_title || `Game #${l.game_id}`}</td>
+                        <td>{l.purchase_date}</td>
+                        <td><span className="badge badge-green">{l.status || 'Owned'}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ADD GAME MODAL */}
+          {showAddModal && (
+            <div className="modal-overlay">
+              <div className="modal-content" style={{ maxWidth: '650px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                  <h2 style={{ color: 'var(--text-primary)', fontSize: '1.5rem', margin: 0 }}>➕ ADD NEW GAME TO STORE</h2>
+                  <button onClick={() => setShowAddModal(false)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+                </div>
+                <form onSubmit={handleCreateGame}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="form-group"><label>Game Title</label><input type="text" className="input-control" value={newGameForm.title} onChange={e=>setNewGameForm({...newGameForm, title: e.target.value})} required placeholder="e.g. Cyberpunk 2077" /></div>
+                    <div className="form-group"><label>Genre</label><input type="text" className="input-control" value={newGameForm.genre} onChange={e=>setNewGameForm({...newGameForm, genre: e.target.value})} required placeholder="e.g. Action RPG" /></div>
+                    <div className="form-group"><label>Price ($)</label><input type="number" step="0.01" className="input-control" value={newGameForm.price} onChange={e=>setNewGameForm({...newGameForm, price: e.target.value})} required placeholder="49.99" /></div>
+                    <div className="form-group"><label>Platform</label><input type="text" className="input-control" value={newGameForm.platform} onChange={e=>setNewGameForm({...newGameForm, platform: e.target.value})} required placeholder="PC / PS5 / Xbox" /></div>
+                    <div className="form-group"><label>Release Date</label><input type="date" className="input-control" value={newGameForm.release_date} onChange={e=>setNewGameForm({...newGameForm, release_date: e.target.value})} required /></div>
+                    <div className="form-group"><label>Poster / Cover Image URL</label><input type="url" className="input-control" value={newGameForm.image} onChange={e=>setNewGameForm({...newGameForm, image: e.target.value})} placeholder="https://cdn.cloudflare.steamstatic.com/..." /></div>
+                  </div>
+                  <div className="form-group"><label>Game Description</label><textarea className="input-control" rows="3" value={newGameForm.description} onChange={e=>setNewGameForm({...newGameForm, description: e.target.value})} placeholder="Enter brief overview..." /></div>
+                  
+                  {newGameForm.image && (
+                    <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+                      <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.3rem' }}>Cover Image Preview:</span>
+                      <img src={newGameForm.image} alt="Preview" style={{ height: '120px', borderRadius: '8px', objectFit: 'cover', border: '1px solid var(--border-color)' }} />
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
+                    <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>Publish Game to Catalog</button>
+                    <button type="button" onClick={() => setShowAddModal(false)} className="btn btn-secondary">Cancel</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* EDIT GAME MODAL */}
+          {editingGame && (
+            <div className="modal-overlay">
+              <div className="modal-content" style={{ maxWidth: '650px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                  <h2 style={{ color: 'var(--text-primary)', fontSize: '1.5rem', margin: 0 }}>✏️ EDIT GAME #{editingGame.game_id}</h2>
+                  <button onClick={() => setEditingGame(null)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+                </div>
+                <form onSubmit={handleUpdateGame}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="form-group"><label>Game Title</label><input type="text" className="input-control" value={editGameForm.title} onChange={e=>setEditGameForm({...editGameForm, title: e.target.value})} required /></div>
+                    <div className="form-group"><label>Genre</label><input type="text" className="input-control" value={editGameForm.genre} onChange={e=>setEditGameForm({...editGameForm, genre: e.target.value})} required /></div>
+                    <div className="form-group"><label>Price ($)</label><input type="number" step="0.01" className="input-control" value={editGameForm.price} onChange={e=>setEditGameForm({...editGameForm, price: e.target.value})} required /></div>
+                    <div className="form-group"><label>Platform</label><input type="text" className="input-control" value={editGameForm.platform} onChange={e=>setEditGameForm({...editGameForm, platform: e.target.value})} required /></div>
+                    <div className="form-group"><label>Release Date</label><input type="date" className="input-control" value={editGameForm.release_date} onChange={e=>setEditGameForm({...editGameForm, release_date: e.target.value})} required /></div>
+                    <div className="form-group"><label>Poster / Cover Image URL</label><input type="url" className="input-control" value={editGameForm.image} onChange={e=>setEditGameForm({...editGameForm, image: e.target.value})} /></div>
+                  </div>
+                  <div className="form-group"><label>Game Description</label><textarea className="input-control" rows="3" value={editGameForm.description} onChange={e=>setEditGameForm({...editGameForm, description: e.target.value})} /></div>
+                  
+                  {editGameForm.image && (
+                    <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+                      <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.3rem' }}>Cover Image Preview:</span>
+                      <img src={editGameForm.image} alt="Preview" style={{ height: '120px', borderRadius: '8px', objectFit: 'cover', border: '1px solid var(--border-color)' }} />
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
+                    <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>Save Changes</button>
+                    <button type="button" onClick={() => setEditingGame(null)} className="btn btn-secondary">Cancel</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
