@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GameRig — Digital Game Library Management System (ADBMS Documentation)</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 15mm 20mm 15mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.55;
+            color: #1e293b;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Page Layout & Breaks */
+        .page-break {
+            page-break-before: always;
+            break-before: page;
+        }
+
+        .no-break {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        /* Cover Page */
+        .cover-page {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: center;
+            padding: 40px 20px;
+            page-break-after: always;
+        }
+
+        .cover-header {
+            margin-top: 30px;
+        }
+
+        .project-badge {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 11pt;
+            letter-spacing: 2px;
+            padding: 6px 18px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .cover-title {
+            font-size: 32pt;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 12px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .cover-subtitle {
+            font-size: 15pt;
+            font-weight: 500;
+            color: #059669;
+            margin: 0 0 25px 0;
+        }
+
+        .cover-divider {
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981, #047857);
+            margin: 0 auto;
+            border-radius: 2px;
+        }
+
+        .cover-center {
+            margin: 40px auto;
+            max-width: 550px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: left;
+        }
+
+        .cover-center h3 {
+            margin-top: 0;
+            color: #0f172a;
+            font-size: 12pt;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        .cover-meta-grid {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            row-gap: 10px;
+            font-size: 10.5pt;
+        }
+
+        .cover-meta-grid .label {
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .cover-meta-grid .val {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .cover-footer {
+            margin-bottom: 20px;
+            font-size: 10pt;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+        }
+
+        /* Headings */
+        h1 {
+            font-size: 20pt;
+            font-weight: 800;
+            color: #0f172a;
+            border-bottom: 2.5px solid #059669;
+            padding-bottom: 8px;
+            margin-top: 0;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        h2 {
+            font-size: 14pt;
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            border-left: 4px solid #10b981;
+            padding-left: 10px;
+        }
+
+        h3 {
+            font-size: 11.5pt;
+            font-weight: 700;
+            color: #334155;
+            margin-top: 18px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin: 0 0 10px 0;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin: 0 0 12px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        /* Table of Contents Styling */
+        .toc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            font-size: 8.8pt;
+        }
+
+        .toc-table th, .toc-table td {
+            border: 1px solid #94a3b8;
+            padding: 4px 8px;
+            line-height: 1.3;
+        }
+
+        .toc-table th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            color: #0f172a;
+            text-align: left;
+        }
+
+        .toc-table .toc-num {
+            font-weight: 700;
+            width: 60px;
+            text-align: center;
+        }
+
+        .toc-table .toc-topic {
+            font-weight: 500;
+        }
+
+        .toc-table .toc-topic.major {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .toc-table .toc-topic.sub {
+            padding-left: 20px;
+            color: #334155;
+        }
+
+        .toc-table .toc-page {
+            width: 70px;
+            text-align: center;
+            font-weight: 600;
+            color: #059669;
+        }
+
+        /* Generic Data Tables */
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 18px 0;
+            font-size: 9.5pt;
+        }
+
+        table.data-table th, table.data-table td {
+            border: 1px solid #cbd5e1;
+            padding: 7px 10px;
+            text-align: left;
+        }
+
+        table.data-table th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        table.data-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-family: 'Consolas', 'Cascadia Code', 'Courier New', monospace;
+            font-size: 8.8pt;
+            line-height: 1.45;
+            color: #0f172a;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 8px 0 14px 0;
+            page-break-inside: avoid;
+        }
+
+        code {
+            font-family: 'Consolas', 'Cascadia Code', 'Courier New', monospace;
+            font-size: 9pt;
+            background-color: #f1f5f9;
+            padding: 2px 5px;
+            border-radius: 4px;
+            color: #0f172a;
+        }
+
+        .sql-keyword { color: #0066cc; font-weight: bold; }
+        .sql-string { color: #0284c7; }
+        .sql-comment { color: #64748b; font-style: italic; }
+
+        /* Output / Query Result Preview */
+        .query-result {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-left: 4px solid #059669;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 8.8pt;
+            font-family: 'Consolas', monospace;
+            margin: 6px 0 16px 0;
+            color: #334155;
+            page-break-inside: avoid;
+        }
+
+        .query-title {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 9.5pt;
+            margin-bottom: 4px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Callout Box */
+        .callout {
+            background-color: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-left: 4px solid #10b981;
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin: 12px 0;
+            font-size: 9.5pt;
+            page-break-inside: avoid;
+        }
+
+        .callout-title {
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 4px;
+        }
+
+        .callout-warn {
+            background-color: #fffbeb;
+            border-color: #fde68a;
+            border-left-color: #f59e0b;
+        }
+
+        .callout-warn .callout-title {
+            color: #92400e;
+        }
+
+        /* Badges */
+        .pk-badge {
+            background-color: #fee2e2;
+            color: #991b1b;
+            font-weight: 700;
+            font-size: 8pt;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #fecaca;
+        }
+
+        .fk-badge {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-weight: 700;
+            font-size: 8pt;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #bae6fd;
+        }
+
+        .uq-badge {
+            background-color: #fef3c7;
+            color: #92400e;
+            font-weight: 700;
+            font-size: 8pt;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #fde68a;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================== -->
+    <!-- COVER PAGE -->
+    <!-- ========================================== -->
+    <div class="cover-page">
+        <div class="cover-header">
+            <div class="project-badge">Course Project Documentation</div>
+            <div class="cover-title">GameRig</div>
+            <div class="cover-subtitle">Digital Game Library Management System</div>
+            <div class="cover-divider"></div>
+        </div>
+
+        <div class="cover-center">
+            <h3>Project & Academic Specification</h3>
+            <div class="cover-meta-grid">
+                <div class="label">Course Title:</div>
+                <div class="val">Advanced Database Management System (ADBMS)</div>
+                <div class="label">Database Engine:</div>
+                <div class="val">MySQL 8.0+ (InnoDB Engine)</div>
+                <div class="label">Architecture:</div>
+                <div class="val">Relational Model (6 Core Entities, BCNF)</div>
+                <div class="label">Full Stack Stack:</div>
+                <div class="val">React 18 + Vite, Node.js + Express, MySQL2</div>
+                <div class="label">Integrity Models:</div>
+                <div class="val">ACID Transactions, Row Locks, Stored Routines</div>
+                <div class="label">Date:</div>
+                <div class="val">Academic Term 2025–2026</div>
+            </div>
+        </div>
+
+        <div class="cover-footer">
+            Comprehensive Database Design, Query Execution, Index Optimization & Concurrency Analysis
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TABLE OF CONTENTS (PAGE 2) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <div style="text-align: center; margin-bottom: 10px;">
+        <h1 style="border: none; justify-content: center; font-size: 20pt; margin-bottom: 2px;">Table of Contents</h1>
+        <div style="font-size: 9pt; color: #64748b;">Systematic Project Index & Page References</div>
+    </div>
+
+    <table class="toc-table">
+        <thead>
+            <tr>
+                <th class="toc-num">S. No.</th>
+                <th>Topics</th>
+                <th class="toc-page">Page No.</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="toc-num">1</td>
+                <td class="toc-topic major">Introduction</td>
+                <td class="toc-page">3</td>
+            </tr>
+            <tr>
+                <td class="toc-num">1.1</td>
+                <td class="toc-topic sub">Objectives</td>
+                <td class="toc-page">3</td>
+            </tr>
+            <tr>
+                <td class="toc-num">1.2</td>
+                <td class="toc-topic sub">Project Description</td>
+                <td class="toc-page">3</td>
+            </tr>
+            <tr>
+                <td class="toc-num">2</td>
+                <td class="toc-topic major">Phase I Database Design</td>
+                <td class="toc-page">5</td>
+            </tr>
+            <tr>
+                <td class="toc-num">2.1</td>
+                <td class="toc-topic sub">Identification of Entities and Attributes</td>
+                <td class="toc-page">5</td>
+            </tr>
+            <tr>
+                <td class="toc-num">2.2</td>
+                <td class="toc-topic sub">ER Diagram</td>
+                <td class="toc-page">6</td>
+            </tr>
+            <tr>
+                <td class="toc-num">2.3</td>
+                <td class="toc-topic sub">Relational Schema</td>
+                <td class="toc-page">7</td>
+            </tr>
+            <tr>
+                <td class="toc-num">2.4</td>
+                <td class="toc-topic sub">Normalization</td>
+                <td class="toc-page">8</td>
+            </tr>
+            <tr>
+                <td class="toc-num">3</td>
+                <td class="toc-topic major">Phase II Database Creation and Queries</td>
+                <td class="toc-page">9</td>
+            </tr>
+            <tr>
+                <td class="toc-num">3.1</td>
+                <td class="toc-topic sub">Creating Tables Using SQL</td>
+                <td class="toc-page">9</td>
+            </tr>
+            <tr>
+                <td class="toc-num">3.2</td>
+                <td class="toc-topic sub">Inserting and Updating Records</td>
+                <td class="toc-page">12</td>
+            </tr>
+            <tr>
+                <td class="toc-num">3.3</td>
+                <td class="toc-topic sub">SQL Queries</td>
+                <td class="toc-page">13</td>
+            </tr>
+            <tr>
+                <td class="toc-num">3.4</td>
+                <td class="toc-topic sub">Aggregate Functions</td>
+                <td class="toc-page">15</td>
+            </tr>
+            <tr>
+                <td class="toc-num">4</td>
+                <td class="toc-topic major">Phase III Data Querying Join and Views</td>
+                <td class="toc-page">17</td>
+            </tr>
+            <tr>
+                <td class="toc-num">4.1</td>
+                <td class="toc-topic sub">Joins</td>
+                <td class="toc-page">17</td>
+            </tr>
+            <tr>
+                <td class="toc-num">4.2</td>
+                <td class="toc-topic sub">Subqueries</td>
+                <td class="toc-page">19</td>
+            </tr>
+            <tr>
+                <td class="toc-num">4.3</td>
+                <td class="toc-topic sub">Views</td>
+                <td class="toc-page">21</td>
+            </tr>
+            <tr>
+                <td class="toc-num">4.4</td>
+                <td class="toc-topic sub">Functions and Procedures</td>
+                <td class="toc-page">23</td>
+            </tr>
+            <tr>
+                <td class="toc-num">5</td>
+                <td class="toc-topic major">Phase IV Transactions and Data Integrity</td>
+                <td class="toc-page">25</td>
+            </tr>
+            <tr>
+                <td class="toc-num">5.1</td>
+                <td class="toc-topic sub">COMMIT, ROLLBACK and SAVEPOINT</td>
+                <td class="toc-page">25</td>
+            </tr>
+            <tr>
+                <td class="toc-num">5.2</td>
+                <td class="toc-topic sub">Integrity Constraints</td>
+                <td class="toc-page">26</td>
+            </tr>
+            <tr>
+                <td class="toc-num">5.3</td>
+                <td class="toc-topic sub">Concurrency Issues</td>
+                <td class="toc-page">27</td>
+            </tr>
+            <tr>
+                <td class="toc-num">7</td>
+                <td class="toc-topic major">Conclusion</td>
+                <td class="toc-page">30</td>
+            </tr>
+            <tr>
+                <td class="toc-num">8</td>
+                <td class="toc-topic major">References</td>
+                <td class="toc-page">30</td>
+            </tr>
+            <tr>
+                <td class="toc-num">9</td>
+                <td class="toc-topic major">Appendix</td>
+                <td class="toc-page">31</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- ========================================== -->
+    <!-- SECTION 1: INTRODUCTION (PAGE 3) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h1>1. Introduction</h1>
+
+    <h2>1.1 Objectives</h2>
+    <p>
+        The primary objective of the <strong>GameRig</strong> project is to design, model, implement, and validate an enterprise-grade digital gaming library and commerce database system for modern digital video game distribution. In modern digital software marketplaces (comparable to Steam, Epic Games, or PlayStation Store), maintaining strict transaction atomicity, real-time catalog search performance, user ownership tracking, review credibility, and referential data integrity across multi-tiered entities is paramount.
+    </p>
+    <p>Specific academic and practical objectives include:</p>
+    <ul>
+        <li><strong>Relational Data Modeling:</strong> Design an optimal schema in Boyce-Codd Normal Form (BCNF) eliminating insertion, update, and deletion anomalies.</li>
+        <li><strong>Transactional Atomicity (ACID):</strong> Guarantee that multi-table operations (e.g., deducting payment and provisioning game licenses to player libraries) execute under all-or-nothing transactional guarantees.</li>
+        <li><strong>Concurrency & Integrity Controls:</strong> Implement pessimistic row-level locking (<code>SELECT ... FOR UPDATE</code>) and comprehensive foreign key cascade rules to prevent race conditions, orphan records, and overselling.</li>
+        <li><strong>Analytical Query Optimization:</strong> Utilize non-clustered B-Tree indexes, composite views, nested subqueries, and stored routines to minimize disk I/O and optimize query execution plans.</li>
+        <li><strong>Full-Stack Interoperability:</strong> Connect the MySQL database to an Express.js REST API with connection pooling and a responsive React frontend interface.</li>
+    </ul>
+
+    <h2>1.2 Project Description</h2>
+    <p>
+        <strong>GameRig</strong> is a full-featured digital game store and personal library management portal. The system models a two-sided platform where administrators manage game listings, prices, and system users, while players register accounts, browse games, submit verified star ratings and text reviews, purchase digital licenses, and organize their acquired software collections.
+    </p>
+    <p>
+        The relational architecture consists of six dedicated entities:
+    </p>
+    <ol>
+        <li><code>ADMIN</code>: Manages credentials, roles, and administrative authority over game catalog releases.</li>
+        <li><code>USER</code>: Represents consumer player accounts storing profile identities, unique emails, and registration dates.</li>
+        <li><code>GAME</code>: Catalogs titles, descriptions, genres, platform compatibility, release schedules, pricing, and administering managers.</li>
+        <li><code>REVIEW</code>: Records player evaluations, numerical 1–5 star scores, qualitative feedback, and posting timestamps with cascade-on-delete protections.</li>
+        <li><code>PAYMENT</code>: Stores financial transaction ledgers including payment channels (UPI, Credit/Debit Card, Net Banking), amounts, and audit timestamps.</li>
+        <li><code>LIBRARY</code>: Acts as the definitive entitlement ledger, binding a specific user to an owned game with a composite unique constraint preventing duplicate ownership purchases.</li>
+    </ol>
+
+    <div class="callout">
+        <div class="callout-title">Core DBMS Architecture Highlights</div>
+        GameRig implements MySQL’s InnoDB storage engine to provide strict ACID guarantees, multi-version concurrency control (MVCC), foreign key referential integrity with cascading updates, and deadlock avoidance mechanisms.
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 2: PHASE I DATABASE DESIGN (PAGE 4) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h1>2. Phase I Database Design</h1>
+
+    <h2>2.1 Identification of Entities and Attributes</h2>
+    <p>
+        During the conceptual design phase, six distinct entities were identified to represent all functional requirements without data redundancy.
+    </p>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Entity Name</th>
+                <th>Attributes</th>
+                <th>Primary Key</th>
+                <th>Foreign Keys & Dependencies</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>ADMIN</strong></td>
+                <td><code>admin_id</code>, <code>name</code>, <code>email</code>, <code>password</code>, <code>role</code></td>
+                <td><span class="pk-badge">admin_id</span></td>
+                <td>None (Independent Entity)</td>
+            </tr>
+            <tr>
+                <td><strong>USER</strong></td>
+                <td><code>user_id</code>, <code>name</code>, <code>email</code>, <code>password</code>, <code>phone</code>, <code>date_joined</code></td>
+                <td><span class="pk-badge">user_id</span></td>
+                <td>None (Independent Entity; <code>email</code> is UNIQUE)</td>
+            </tr>
+            <tr>
+                <td><strong>GAME</strong></td>
+                <td><code>game_id</code>, <code>title</code>, <code>description</code>, <code>genre</code>, <code>price</code>, <code>platform</code>, <code>release_date</code>, <code>image</code>, <code>admin_id</code></td>
+                <td><span class="pk-badge">game_id</span></td>
+                <td><span class="fk-badge">admin_id</span> &rarr; references <code>ADMIN(admin_id)</code></td>
+            </tr>
+            <tr>
+                <td><strong>REVIEW</strong></td>
+                <td><code>review_id</code>, <code>user_id</code>, <code>game_id</code>, <code>rating</code>, <code>review_text</code>, <code>review_date</code></td>
+                <td><span class="pk-badge">review_id</span></td>
+                <td>
+                    <span class="fk-badge">user_id</span> &rarr; <code>USER(user_id)</code><br>
+                    <span class="fk-badge">game_id</span> &rarr; <code>GAME(game_id)</code>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>PAYMENT</strong></td>
+                <td><code>payment_id</code>, <code>user_id</code>, <code>game_id</code>, <code>amount</code>, <code>payment_status</code>, <code>payment_method</code>, <code>payment_date</code></td>
+                <td><span class="pk-badge">payment_id</span></td>
+                <td>
+                    <span class="fk-badge">user_id</span> &rarr; <code>USER(user_id)</code><br>
+                    <span class="fk-badge">game_id</span> &rarr; <code>GAME(game_id)</code>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>LIBRARY</strong></td>
+                <td><code>library_id</code>, <code>user_id</code>, <code>game_id</code>, <code>purchase_date</code>, <code>status</code></td>
+                <td><span class="pk-badge">library_id</span></td>
+                <td>
+                    <span class="fk-badge">user_id</span> &rarr; <code>USER(user_id)</code><br>
+                    <span class="fk-badge">game_id</span> &rarr; <code>GAME(game_id)</code><br>
+                    <span class="uq-badge">UNIQUE(user_id, game_id)</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- ========================================== -->
+    <!-- SECTION 2.2: ER DIAGRAM (PAGE 5) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h2>2.2 ER Diagram</h2>
+    <p>
+        The Entity-Relationship (ER) diagram below models the conceptual database architecture, cardinalities, associative entities, and relationship sets across the GameRig system.
+    </p>
+
+    <!-- Vector SVG ER Diagram -->
+    <div style="text-align: center; margin: 20px 0; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px;">
+        <svg viewBox="0 0 780 460" width="100%" height="420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1 L 8 5 L 0 9 z" fill="#475569"/>
+                </marker>
+                <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+                    <feDropShadow dx="2" dy="2" stdDeviation="2" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <!-- Relationship Lines -->
+            <!-- ADMIN to GAME (1 : M) -->
+            <line x1="140" y1="90" x2="140" y2="200" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="150" y="150" font-size="11" fill="#0f172a" font-weight="bold">1 : M (Publishes)</text>
+
+            <!-- GAME to REVIEW (1 : M) -->
+            <line x1="220" y1="240" x2="380" y2="240" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="260" y="230" font-size="11" fill="#0f172a" font-weight="bold">1 : M (Reviewed In)</text>
+
+            <!-- USER to REVIEW (1 : M) -->
+            <line x1="640" y1="90" x2="480" y2="200" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="560" y="145" font-size="11" fill="#0f172a" font-weight="bold">1 : M (Writes)</text>
+
+            <!-- USER to PAYMENT (1 : M) -->
+            <line x1="640" y1="90" x2="640" y2="350" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="650" y="230" font-size="11" fill="#0f172a" font-weight="bold">1 : M (Executes)</text>
+
+            <!-- GAME to PAYMENT (1 : M) -->
+            <line x1="140" y1="280" x2="560" y2="390" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="310" y="340" font-size="11" fill="#0f172a" font-weight="bold">1 : M (Paid For)</text>
+
+            <!-- USER to LIBRARY (1 : M) -->
+            <line x1="600" y1="90" x2="380" y2="360" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="470" y="270" font-size="11" fill="#0f172a" font-weight="bold">1 : M (Owns)</text>
+
+            <!-- GAME to LIBRARY (1 : M) -->
+            <line x1="140" y1="280" x2="280" y2="360" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="180" y="330" font-size="11" fill="#0f172a" font-weight="bold">1 : M (Contained In)</text>
+
+            <!-- ENTITY BOXES -->
+            <!-- ADMIN -->
+            <g transform="translate(60, 20)" filter="url(#shadow)">
+                <rect width="160" height="70" rx="6" fill="#1e293b" />
+                <text x="80" y="25" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">ADMIN</text>
+                <line x1="0" y1="35" x2="160" y2="35" stroke="#475569" stroke-width="1"/>
+                <text x="10" y="50" fill="#93c5fd" font-size="9.5" font-family="monospace">PK: admin_id</text>
+                <text x="10" y="63" fill="#cbd5e1" font-size="9">name, email, role</text>
+            </g>
+
+            <!-- USER -->
+            <g transform="translate(560, 20)" filter="url(#shadow)">
+                <rect width="160" height="70" rx="6" fill="#1e293b" />
+                <text x="80" y="25" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">USER</text>
+                <line x1="0" y1="35" x2="160" y2="35" stroke="#475569" stroke-width="1"/>
+                <text x="10" y="50" fill="#93c5fd" font-size="9.5" font-family="monospace">PK: user_id</text>
+                <text x="10" y="63" fill="#cbd5e1" font-size="9">name, email, phone, date</text>
+            </g>
+
+            <!-- GAME -->
+            <g transform="translate(60, 200)" filter="url(#shadow)">
+                <rect width="160" height="80" rx="6" fill="#047857" />
+                <text x="80" y="25" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">GAME</text>
+                <line x1="0" y1="35" x2="160" y2="35" stroke="#10b981" stroke-width="1"/>
+                <text x="10" y="50" fill="#bbf7d0" font-size="9.5" font-family="monospace">PK: game_id</text>
+                <text x="10" y="63" fill="#ffffff" font-size="9">title, price, genre, platform</text>
+                <text x="10" y="74" fill="#fed7aa" font-size="9" font-family="monospace">FK: admin_id</text>
+            </g>
+
+            <!-- REVIEW -->
+            <g transform="translate(380, 200)" filter="url(#shadow)">
+                <rect width="160" height="80" rx="6" fill="#0284c7" />
+                <text x="80" y="25" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">REVIEW</text>
+                <line x1="0" y1="35" x2="160" y2="35" stroke="#38bdf8" stroke-width="1"/>
+                <text x="10" y="50" fill="#bae6fd" font-size="9.5" font-family="monospace">PK: review_id</text>
+                <text x="10" y="63" fill="#fed7aa" font-size="9" font-family="monospace">FK: user_id, game_id</text>
+                <text x="10" y="74" fill="#ffffff" font-size="9">rating (1-5), review_text</text>
+            </g>
+
+            <!-- LIBRARY (Associative Entity) -->
+            <g transform="translate(260, 350)" filter="url(#shadow)">
+                <rect width="170" height="85" rx="6" fill="#6d28d9" />
+                <text x="85" y="25" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">LIBRARY</text>
+                <line x1="0" y1="35" x2="170" y2="35" stroke="#a78bfa" stroke-width="1"/>
+                <text x="10" y="50" fill="#ddd6fe" font-size="9.5" font-family="monospace">PK: library_id</text>
+                <text x="10" y="63" fill="#fed7aa" font-size="9" font-family="monospace">FK: user_id, game_id</text>
+                <text x="10" y="75" fill="#fef08a" font-size="9">UQ: (user_id, game_id)</text>
+            </g>
+
+            <!-- PAYMENT -->
+            <g transform="translate(560, 350)" filter="url(#shadow)">
+                <rect width="160" height="85" rx="6" fill="#b45309" />
+                <text x="80" y="25" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">PAYMENT</text>
+                <line x1="0" y1="35" x2="160" y2="35" stroke="#f59e0b" stroke-width="1"/>
+                <text x="10" y="50" fill="#fed7aa" font-size="9.5" font-family="monospace">PK: payment_id</text>
+                <text x="10" y="63" fill="#fde68a" font-size="9" font-family="monospace">FK: user_id, game_id</text>
+                <text x="10" y="75" fill="#ffffff" font-size="9">amount, method, status</text>
+            </g>
+        </svg>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 2.3: RELATIONAL SCHEMA (PAGE 6) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h2>2.3 Relational Schema</h2>
+    <p>
+        The relational schema formally maps conceptual entities and relationships into normalized relations. Primary keys are underlined (<span style="text-decoration: underline; font-weight: bold;">PK</span>), and foreign keys are designated with an arrow (&rarr;).
+    </p>
+
+    <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 18px; margin: 15px 0; font-family: monospace; font-size: 10pt; line-height: 1.8;">
+        <strong>ADMIN</strong> (<span style="text-decoration: underline; font-weight: bold; color: #dc2626;">admin_id</span>, name, email, password, role)<br>
+        <span style="color: #64748b;">&bull; AK: (email) [Unique Alternate Key]</span><br><br>
+
+        <strong>USER</strong> (<span style="text-decoration: underline; font-weight: bold; color: #dc2626;">user_id</span>, name, email, password, phone, date_joined)<br>
+        <span style="color: #64748b;">&bull; AK: (email) [Unique Alternate Key]</span><br><br>
+
+        <strong>GAME</strong> (<span style="text-decoration: underline; font-weight: bold; color: #dc2626;">game_id</span>, title, description, genre, price, platform, release_date, image, <span style="color: #0284c7; font-weight: bold;">admin_id</span>)<br>
+        <span style="color: #64748b;">&bull; FK: admin_id &rarr; ADMIN(admin_id) ON DELETE SET NULL</span><br><br>
+
+        <strong>REVIEW</strong> (<span style="text-decoration: underline; font-weight: bold; color: #dc2626;">review_id</span>, <span style="color: #0284c7; font-weight: bold;">user_id</span>, <span style="color: #0284c7; font-weight: bold;">game_id</span>, rating, review_text, review_date)<br>
+        <span style="color: #64748b;">&bull; FK: user_id &rarr; USER(user_id) ON DELETE CASCADE</span><br>
+        <span style="color: #64748b;">&bull; FK: game_id &rarr; GAME(game_id) ON DELETE CASCADE</span><br><br>
+
+        <strong>PAYMENT</strong> (<span style="text-decoration: underline; font-weight: bold; color: #dc2626;">payment_id</span>, <span style="color: #0284c7; font-weight: bold;">user_id</span>, <span style="color: #0284c7; font-weight: bold;">game_id</span>, amount, payment_status, payment_method, payment_date)<br>
+        <span style="color: #64748b;">&bull; FK: user_id &rarr; USER(user_id) ON DELETE CASCADE</span><br>
+        <span style="color: #64748b;">&bull; FK: game_id &rarr; GAME(game_id) ON DELETE CASCADE</span><br><br>
+
+        <strong>LIBRARY</strong> (<span style="text-decoration: underline; font-weight: bold; color: #dc2626;">library_id</span>, <span style="color: #0284c7; font-weight: bold;">user_id</span>, <span style="color: #0284c7; font-weight: bold;">game_id</span>, purchase_date, status)<br>
+        <span style="color: #64748b;">&bull; FK: user_id &rarr; USER(user_id) ON DELETE CASCADE</span><br>
+        <span style="color: #64748b;">&bull; FK: game_id &rarr; GAME(game_id) ON DELETE CASCADE</span><br>
+        <span style="color: #64748b;">&bull; UQ: (user_id, game_id) [Prevent multiple concurrent ownership of same license]</span>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 2.4: NORMALIZATION (PAGE 7) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h2>2.4 Normalization</h2>
+    <p>
+        Database normalization is the formal mathematical technique used to organize relations, minimize redundancy, and prevent update, insertion, and deletion anomalies. GameRig was engineered step-by-step from Unnormalized Form (UNF) through to Boyce-Codd Normal Form (BCNF).
+    </p>
+
+    <h3>1. First Normal Form (1NF)</h3>
+    <p>
+        <strong>Rule:</strong> Each relation must contain only atomic (indivisible) attribute values; no repeating groups or multivalued attributes are permitted.
+    </p>
+    <ul>
+        <li><strong>Violation in UNF:</strong> If a single user record stored multiple purchased games as a comma-separated array (e.g. <code>games_owned = "Cyberpunk 2077, Elden Ring"</code>), querying specific games requires parsing string tokens and prevents foreign key index lookup.</li>
+        <li><strong>1NF Transformation:</strong> Repeating collections were dismantled. An associative table (<code>LIBRARY</code>) was introduced where every individual ownership instance is stored as a single, atomic row.</li>
+    </ul>
+
+    <h3>2. Second Normal Form (2NF)</h3>
+    <p>
+        <strong>Rule:</strong> Relation must be in 1NF and possess <em>no partial functional dependencies</em> (all non-prime attributes must be fully functionally dependent on the entire primary key).
+    </p>
+    <ul>
+        <li><strong>Analysis:</strong> In composite-key candidate tables (such as <code>(user_id, game_id)</code>), storing the game's price or description would create a partial dependency, because <code>price</code> depends solely on <code>game_id</code>, not <code>user_id</code>.</li>
+        <li><strong>2NF Transformation:</strong> The <code>GAME</code> relation was cleanly separated so that <code>title, description, price, genre</code> depend solely on the single candidate key <code>game_id</code>. In <code>LIBRARY</code>, surrogate key <code>library_id</code> is the primary key, and non-prime attributes (<code>purchase_date, status</code>) depend fully on the complete key.</li>
+    </ul>
+
+    <h3>3. Third Normal Form (3NF)</h3>
+    <p>
+        <strong>Rule:</strong> Relation must be in 2NF and contain <em>no transitive functional dependencies</em> (for any non-trivial functional dependency $X \rightarrow Y$, $X$ must be a superkey or $Y$ is a prime attribute).
+    </p>
+    <ul>
+        <li><strong>Analysis:</strong> If <code>PAYMENT</code> stored customer billing address and user name (where $payment\_id \rightarrow user\_id$ and $user\_id \rightarrow user\_address$), an update to a user's address would require updating multiple payment rows.</li>
+        <li><strong>3NF Transformation:</strong> Transitive attributes (user identity details) remain strictly in the <code>USER</code> table. <code>PAYMENT</code> references only <code>user_id</code> and records transaction-specific data (<code>amount, payment_status, payment_method</code>).</li>
+    </ul>
+
+    <h3>4. Boyce-Codd Normal Form (BCNF)</h3>
+    <p>
+        <strong>Rule:</strong> For every functional dependency $X \rightarrow Y$, $X$ must be a superkey.
+    </p>
+    <ul>
+        <li>In all six tables (<code>ADMIN</code>, <code>USER</code>, <code>GAME</code>, <code>REVIEW</code>, <code>PAYMENT</code>, <code>LIBRARY</code>), the determinants of every functional dependency are candidate keys (e.g., <code>user_id</code> or <code>email</code> in <code>USER</code>; <code>(user_id, game_id)</code> in <code>LIBRARY</code>). Hence, the entire GameRig schema satisfies BCNF.</li>
+    </ul>
+
+    <!-- ========================================== -->
+    <!-- SECTION 3: PHASE II DATABASE CREATION (PAGE 8) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h1>3. Phase II Database Creation and Queries</h1>
+
+    <h2>3.1 Creating Tables Using SQL</h2>
+    <p>
+        The following Data Definition Language (DDL) statements initialize the <code>GameRig</code> relational database, declare primary keys, configure check constraints, and set up cascading referential integrity.
+    </p>
+
+    <pre><code><span class="sql-keyword">CREATE DATABASE IF NOT EXISTS</span> GameRig;
+<span class="sql-keyword">USE</span> GameRig;
+
+<span class="sql-comment">-- 1. ADMIN TABLE</span>
+<span class="sql-keyword">CREATE TABLE</span> ADMIN (
+    admin_id    <span class="sql-keyword">INT PRIMARY KEY AUTO_INCREMENT</span>,
+    name        <span class="sql-keyword">VARCHAR</span>(100) <span class="sql-keyword">NOT NULL</span>,
+    email       <span class="sql-keyword">VARCHAR</span>(100) <span class="sql-keyword">NOT NULL UNIQUE</span>,
+    password    <span class="sql-keyword">VARCHAR</span>(255) <span class="sql-keyword">NOT NULL</span>,
+    role        <span class="sql-keyword">VARCHAR</span>(50)  <span class="sql-keyword">DEFAULT</span> <span class="sql-string">'Admin'</span>
+);
+
+<span class="sql-comment">-- 2. USER TABLE (`USER` is a MySQL keyword -> backticks required)</span>
+<span class="sql-keyword">CREATE TABLE</span> `USER` (
+    user_id     <span class="sql-keyword">INT PRIMARY KEY AUTO_INCREMENT</span>,
+    name        <span class="sql-keyword">VARCHAR</span>(100) <span class="sql-keyword">NOT NULL</span>,
+    email       <span class="sql-keyword">VARCHAR</span>(100) <span class="sql-keyword">NOT NULL UNIQUE</span>,
+    password    <span class="sql-keyword">VARCHAR</span>(255) <span class="sql-keyword">NOT NULL</span>,
+    phone       <span class="sql-keyword">VARCHAR</span>(15),
+    date_joined <span class="sql-keyword">DATE NOT NULL</span>
+);
+
+<span class="sql-comment">-- 3. GAME TABLE (with CHECK constraint on price)</span>
+<span class="sql-keyword">CREATE TABLE</span> GAME (
+    game_id      <span class="sql-keyword">INT PRIMARY KEY AUTO_INCREMENT</span>,
+    title        <span class="sql-keyword">VARCHAR</span>(150) <span class="sql-keyword">NOT NULL</span>,
+    description  <span class="sql-keyword">TEXT</span>,
+    genre        <span class="sql-keyword">VARCHAR</span>(50)  <span class="sql-keyword">NOT NULL</span>,
+    price        <span class="sql-keyword">DECIMAL</span>(10,2) <span class="sql-keyword">NOT NULL DEFAULT</span> 0.00 <span class="sql-keyword">CHECK</span> (price >= 0),
+    platform     <span class="sql-keyword">VARCHAR</span>(50)  <span class="sql-keyword">NOT NULL</span>,
+    release_date <span class="sql-keyword">DATE</span>,
+    image        <span class="sql-keyword">VARCHAR</span>(500),
+    admin_id     <span class="sql-keyword">INT</span>,
+    <span class="sql-keyword">FOREIGN KEY</span> (admin_id) <span class="sql-keyword">REFERENCES</span> ADMIN(admin_id) <span class="sql-keyword">ON DELETE SET NULL</span>
+);
+
+<span class="sql-comment">-- 4. REVIEW TABLE (with CHECK constraint for 1-5 star bounds)</span>
+<span class="sql-keyword">CREATE TABLE</span> REVIEW (
+    review_id    <span class="sql-keyword">INT PRIMARY KEY AUTO_INCREMENT</span>,
+    user_id      <span class="sql-keyword">INT NOT NULL</span>,
+    game_id      <span class="sql-keyword">INT NOT NULL</span>,
+    rating       <span class="sql-keyword">INT NOT NULL CHECK</span> (rating >= 1 <span class="sql-keyword">AND</span> rating <= 5),
+    review_text  <span class="sql-keyword">TEXT</span>,
+    review_date  <span class="sql-keyword">DATE NOT NULL</span>,
+    <span class="sql-keyword">FOREIGN KEY</span> (user_id) <span class="sql-keyword">REFERENCES</span> `USER`(user_id) <span class="sql-keyword">ON DELETE CASCADE</span>,
+    <span class="sql-keyword">FOREIGN KEY</span> (game_id) <span class="sql-keyword">REFERENCES</span> GAME(game_id)   <span class="sql-keyword">ON DELETE CASCADE</span>
+);</code></pre>
+
+    <!-- Table continuation -->
+    <pre><code><span class="sql-comment">-- 5. PAYMENT TABLE (financial ledger with CHECK amount >= 0)</span>
+<span class="sql-keyword">CREATE TABLE</span> PAYMENT (
+    payment_id      <span class="sql-keyword">INT PRIMARY KEY AUTO_INCREMENT</span>,
+    user_id         <span class="sql-keyword">INT NOT NULL</span>,
+    game_id         <span class="sql-keyword">INT NOT NULL</span>,
+    amount          <span class="sql-keyword">DECIMAL</span>(10,2) <span class="sql-keyword">NOT NULL CHECK</span> (amount >= 0),
+    payment_status  <span class="sql-keyword">VARCHAR</span>(30)   <span class="sql-keyword">NOT NULL DEFAULT</span> <span class="sql-string">'Completed'</span>,
+    payment_method  <span class="sql-keyword">VARCHAR</span>(50)   <span class="sql-keyword">NOT NULL</span>,
+    payment_date    <span class="sql-keyword">DATE NOT NULL</span>,
+    <span class="sql-keyword">FOREIGN KEY</span> (user_id) <span class="sql-keyword">REFERENCES</span> `USER`(user_id) <span class="sql-keyword">ON DELETE CASCADE</span>,
+    <span class="sql-keyword">FOREIGN KEY</span> (game_id) <span class="sql-keyword">REFERENCES</span> GAME(game_id)   <span class="sql-keyword">ON DELETE CASCADE</span>
+);
+
+<span class="sql-comment">-- 6. LIBRARY TABLE (Ownership mapping with Composite UNIQUE constraint)</span>
+<span class="sql-keyword">CREATE TABLE</span> `LIBRARY` (
+    library_id     <span class="sql-keyword">INT PRIMARY KEY AUTO_INCREMENT</span>,
+    user_id        <span class="sql-keyword">INT NOT NULL</span>,
+    game_id        <span class="sql-keyword">INT NOT NULL</span>,
+    purchase_date  <span class="sql-keyword">DATE NOT NULL</span>,
+    status         <span class="sql-keyword">VARCHAR</span>(30) <span class="sql-keyword">DEFAULT</span> <span class="sql-string">'Owned'</span>,
+    <span class="sql-keyword">FOREIGN KEY</span> (user_id) <span class="sql-keyword">REFERENCES</span> `USER`(user_id) <span class="sql-keyword">ON DELETE CASCADE</span>,
+    <span class="sql-keyword">FOREIGN KEY</span> (game_id) <span class="sql-keyword">REFERENCES</span> GAME(game_id)   <span class="sql-keyword">ON DELETE CASCADE</span>,
+    <span class="sql-keyword">UNIQUE KEY</span> unique_user_game (user_id, game_id)
+);</code></pre>
+
+    <!-- ========================================== -->
+    <!-- SECTION 3.2: INSERTING & UPDATING (PAGE 10) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h2>3.2 Inserting and Updating Records</h2>
+    <p>
+        The following DML statements demonstrate inserting sample records, modifying entity attributes through <code>UPDATE</code>, and executing constraint-safe deletions.
+    </p>
+
+    <h3>1. Sample Insertions (DML)</h3>
+    <pre><code><span class="sql-comment">-- Insert System Admin & Moderator</span>
+<span class="sql-keyword">INSERT INTO</span> ADMIN (name, email, password, role) <span class="sql-keyword">VALUES</span>
+(<span class="sql-string">'System Admin'</span>, <span class="sql-string">'admin@gamerig.com'</span>, <span class="sql-string">'$2b$10$hashed_pw_here...'</span>, <span class="sql-string">'Super Admin'</span>),
+(<span class="sql-string">'Alex Mercer'</span>,  <span class="sql-string">'alex@gamerig.com'</span>,  <span class="sql-string">'$2b$10$hashed_pw_here...'</span>, <span class="sql-string">'Game Moderator'</span>);
+
+<span class="sql-comment">-- Insert Registered Users</span>
+<span class="sql-keyword">INSERT INTO</span> `USER` (name, email, password, phone, date_joined) <span class="sql-keyword">VALUES</span>
+(<span class="sql-string">'John Doe'</span>,     <span class="sql-string">'john@gamerig.com'</span>,  <span class="sql-string">'$2b$10$hash...'</span>, <span class="sql-string">'+19876543210'</span>, <span class="sql-string">'2025-01-15'</span>),
+(<span class="sql-string">'Sarah Connor'</span>, <span class="sql-string">'sarah@gamerig.com'</span>, <span class="sql-string">'$2b$10$hash...'</span>, <span class="sql-string">'+19876543211'</span>, <span class="sql-string">'2025-02-01'</span>),
+(<span class="sql-string">'Gamer Pro'</span>,    <span class="sql-string">'gamer@gamerig.com'</span>, <span class="sql-string">'$2b$10$hash...'</span>, <span class="sql-keyword">NULL</span>,          <span class="sql-string">'2025-03-10'</span>);
+
+<span class="sql-comment">-- Insert Sample Catalog Game</span>
+<span class="sql-keyword">INSERT INTO</span> GAME (title, description, genre, price, platform, release_date, admin_id) <span class="sql-keyword">VALUES</span>
+(<span class="sql-string">'Cyberpunk 2077: Phantom Liberty'</span>, <span class="sql-string">'Action RPG in Night City'</span>, <span class="sql-string">'RPG'</span>, 59.99, <span class="sql-string">'PC / PS5'</span>, <span class="sql-string">'2023-09-26'</span>, 1),
+(<span class="sql-string">'Elden Ring: Shadow of the Erdtree'</span>, <span class="sql-string">'Dark fantasy action RPG'</span>, <span class="sql-string">'Action RPG'</span>, 39.99, <span class="sql-string">'PC / Console'</span>, <span class="sql-string">'2024-06-21'</span>, 1);</code></pre>
+
+    <h3>2. Record Modifications (UPDATE)</h3>
+    <pre><code><span class="sql-comment">-- Scenario: Price discount applied to Grand Theft Auto V</span>
+<span class="sql-keyword">UPDATE</span> GAME
+<span class="sql-keyword">SET</span>    price = 19.99
+<span class="sql-keyword">WHERE</span>  game_id = 4;
+
+<span class="sql-comment">-- Scenario: Payment gateway webhook triggers payment state transition</span>
+<span class="sql-keyword">UPDATE</span> PAYMENT
+<span class="sql-keyword">SET</span>    payment_status = <span class="sql-string">'Completed'</span>
+<span class="sql-keyword">WHERE</span>  payment_id = 5;</code></pre>
+
+    <h3>3. Safe Deletions (DELETE)</h3>
+    <pre><code><span class="sql-comment">-- Safely remove unneeded or flagged review (no dependents reference REVIEW)</span>
+<span class="sql-keyword">DELETE FROM</span> REVIEW 
+<span class="sql-keyword">WHERE</span>  review_id = 6;</code></pre>
+
+    <!-- ========================================== -->
+    <!-- SECTION 3.3: SQL QUERIES (PAGE 11) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h2>3.3 SQL Queries</h2>
+    <p>
+        The following queries showcase filtering with <code>WHERE</code>, range evaluations with <code>BETWEEN</code>, sorting via <code>ORDER BY</code>, and handling <code>NULL</code> values.
+    </p>
+
+    <div class="query-title">Query 1: Games filtered by Genre and ordered by Price</div>
+    <pre><code><span class="sql-keyword">SELECT</span> game_id, title, genre, price, platform
+<span class="sql-keyword">FROM</span>   GAME
+<span class="sql-keyword">WHERE</span>  genre = <span class="sql-string">'Action RPG'</span>
+<span class="sql-keyword">ORDER BY</span> price <span class="sql-keyword">DESC</span>;</code></pre>
+    <div class="query-result">
+        +---------+------------------------------------+------------+-------+-------------------------+<br>
+        | game_id | title                              | genre      | price | platform                |<br>
+        +---------+------------------------------------+------------+-------+-------------------------+<br>
+        |       6 | Black Myth: Wukong                 | Action RPG | 59.99 | PC / PS5                |<br>
+        |      15 | Ghost of Tsushima DIRECTOR'S CUT   | Action RPG | 59.99 | PC / PS5                |<br>
+        |       2 | Elden Ring: Shadow of the Erdtree  | Action RPG | 39.99 | PC / PlayStation / Xbox |<br>
+        +---------+------------------------------------+------------+-------+-------------------------+<br>
+        3 rows in set (0.00 sec)
+    </div>
+
+    <div class="query-title">Query 2: Mid-Price Range Games ($20.00 to $50.00)</div>
+    <pre><code><span class="sql-keyword">SELECT</span> game_id, title, genre, price
+<span class="sql-keyword">FROM</span>   GAME
+<span class="sql-keyword">WHERE</span>  price <span class="sql-keyword">BETWEEN</span> 20.00 <span class="sql-keyword">AND</span> 50.00
+<span class="sql-keyword">ORDER BY</span> price <span class="sql-keyword">ASC</span>;</code></pre>
+    <div class="query-result">
+        +---------+-----------------------------------+--------------------+-------+<br>
+        | game_id | title                             | genre              | price |<br>
+        +---------+-----------------------------------+--------------------+-------+<br>
+        |       4 | Grand Theft Auto V                | Action             | 29.99 |<br>
+        |      19 | Palworld                          | Monster Survival   | 29.99 |<br>
+        |      20 | Minecraft: Java & Bedrock Edition | Sandbox / Survival | 29.99 |<br>
+        |       2 | Elden Ring: Shadow of the Erdtree | Action RPG         | 39.99 |<br>
+        |       8 | The Witcher 3: Wild Hunt          | Open World RPG     | 39.99 |<br>
+        |      16 | Resident Evil 4 Remake            | Survival Horror    | 39.99 |<br>
+        |       3 | God of War Ragnarök               | Action / Adventure | 49.99 |<br>
+        +---------+-----------------------------------+--------------------+-------+<br>
+        7 rows in set (0.00 sec)
+    </div>
+
+    <div class="query-title">Query 3: Handling Missing Contact Data (IS NULL / IS NOT NULL)</div>
+    <pre><code><span class="sql-comment">-- Find users without registered phone numbers</span>
+<span class="sql-keyword">SELECT</span> user_id, name, email, phone 
+<span class="sql-keyword">FROM</span>   `USER` 
+<span class="sql-keyword">WHERE</span>  phone <span class="sql-keyword">IS NULL</span>;</code></pre>
+    <div class="query-result">
+        +---------+-----------+-------------------+-------+<br>
+        | user_id | name      | email             | phone |<br>
+        +---------+-----------+-------------------+-------+<br>
+        |       3 | Gamer Pro | gamer@gamerig.com | NULL  |<br>
+        +---------+-----------+-------------------+-------+<br>
+        1 row in set (0.00 sec)
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 3.4: AGGREGATE FUNCTIONS (PAGE 12) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h2>3.4 Aggregate Functions</h2>
+    <p>
+        Aggregate functions perform mathematical summarization over sets of values. In GameRig, aggregates compute average ratings, sales metrics, and player counts using <code>COUNT</code>, <code>AVG</code>, <code>SUM</code>, <code>GROUP BY</code>, and <code>HAVING</code>.
+    </p>
+
+    <div class="query-title">1. Average Rating and Total Review Volume per Game (GROUP BY & HAVING)</div>
+    <pre><code><span class="sql-keyword">SELECT</span> g.game_id, g.title,
+       <span class="sql-keyword">ROUND</span>(<span class="sql-keyword">AVG</span>(r.rating), 2) <span class="sql-keyword">AS</span> avg_rating,
+       <span class="sql-keyword">COUNT</span>(r.review_id)      <span class="sql-keyword">AS</span> total_reviews
+<span class="sql-keyword">FROM</span>   GAME g
+<span class="sql-keyword">LEFT JOIN</span> REVIEW r <span class="sql-keyword">ON</span> g.game_id = r.game_id
+<span class="sql-keyword">GROUP BY</span> g.game_id, g.title
+<span class="sql-keyword">HAVING</span> <span class="sql-keyword">COUNT</span>(r.review_id) > 0
+<span class="sql-keyword">ORDER BY</span> avg_rating <span class="sql-keyword">DESC</span>;</code></pre>
+    <div class="query-result">
+        +---------+-----------------------------------+------------+---------------+<br>
+        | game_id | title                             | avg_rating | total_reviews |<br>
+        +---------+-----------------------------------+------------+---------------+<br>
+        |       2 | Elden Ring: Shadow of the Erdtree |       5.00 |             1 |<br>
+        |       4 | Grand Theft Auto V                |       5.00 |             1 |<br>
+        |       1 | Cyberpunk 2077: Phantom Liberty   |       4.00 |             2 |<br>
+        |       3 | God of War Ragnarök               |       4.00 |             1 |<br>
+        |       5 | Red Dead Redemption 2             |       4.00 |             1 |<br>
+        +---------+-----------------------------------+------------+---------------+<br>
+        5 rows in set (0.00 sec)
+    </div>
+
+    <div class="query-title">2. Total Revenue & Transaction Breakdown per Payment Gateway</div>
+    <pre><code><span class="sql-keyword">SELECT</span> payment_method,
+       <span class="sql-keyword">COUNT</span>(*)          <span class="sql-keyword">AS</span> completed_transactions,
+       <span class="sql-keyword">SUM</span>(amount)       <span class="sql-keyword">AS</span> gross_revenue,
+       <span class="sql-keyword">ROUND</span>(<span class="sql-keyword">AVG</span>(amount), 2) <span class="sql-keyword">AS</span> avg_ticket_size
+<span class="sql-keyword">FROM</span>   PAYMENT
+<span class="sql-keyword">WHERE</span>  payment_status = <span class="sql-string">'Completed'</span>
+<span class="sql-keyword">GROUP BY</span> payment_method
+<span class="sql-keyword">ORDER BY</span> gross_revenue <span class="sql-keyword">DESC</span>;</code></pre>
+    <div class="query-result">
+        +----------------+------------------------+---------------+-----------------+<br>
+        | payment_method | completed_transactions | gross_revenue | avg_ticket_size |<br>
+        +----------------+------------------------+---------------+-----------------+<br>
+        | Credit Card    |                      2 |        119.98 |           59.99 |<br>
+        | Net Banking    |                      1 |         49.99 |           49.99 |<br>
+        | UPI            |                      1 |         39.99 |           39.99 |<br>
+        | Debit Card     |                      1 |         29.99 |           29.99 |<br>
+        +----------------+------------------------+---------------+-----------------+<br>
+        4 rows in set (0.00 sec)
+    </div>
+
+    <div class="query-title">3. Comprehensive System-Wide Metrics (Single Pass Aggregation)</div>
+    <pre><code><span class="sql-keyword">SELECT</span>
+    (<span class="sql-keyword">SELECT COUNT</span>(*) <span class="sql-keyword">FROM</span> `USER`)                                     <span class="sql-keyword">AS</span> total_users,
+    (<span class="sql-keyword">SELECT COUNT</span>(*) <span class="sql-keyword">FROM</span> GAME)                                       <span class="sql-keyword">AS</span> total_games,
+    (<span class="sql-keyword">SELECT COUNT</span>(*) <span class="sql-keyword">FROM</span> REVIEW)                                     <span class="sql-keyword">AS</span> total_reviews,
+    (<span class="sql-keyword">SELECT COUNT</span>(*) <span class="sql-keyword">FROM</span> `LIBRARY`)                                  <span class="sql-keyword">AS</span> total_library_records,
+    (<span class="sql-keyword">SELECT ROUND</span>(<span class="sql-keyword">SUM</span>(amount), 2) <span class="sql-keyword">FROM</span> PAYMENT <span class="sql-keyword">WHERE</span> payment_status = <span class="sql-string">'Completed'</span>) <span class="sql-keyword">AS</span> total_revenue;</code></pre>
+    <div class="query-result">
+        +-------------+-------------+---------------+-----------------------+---------------+<br>
+        | total_users | total_games | total_reviews | total_library_records | total_revenue |<br>
+        +-------------+-------------+---------------+-----------------------+---------------+<br>
+        |           3 |          20 |             6 |                     5 |        239.95 |<br>
+        +-------------+-------------+---------------+-----------------------+---------------+<br>
+        1 row in set (0.00 sec)
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 4: PHASE III DATA QUERYING (PAGE 13) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h1>4. Phase III Data Querying Join and Views</h1>
+
+    <h2>4.1 Joins</h2>
+    <p>
+        Relational databases distribute attributes across tables to avoid redundancy. Relational <code>JOIN</code> operations recombine related entities into unified analytical projections.
+    </p>
+
+    <div class="query-title">1. Multi-Table Review Audit: USER + REVIEW + GAME (3-Table INNER JOIN)</div>
+    <pre><code><span class="sql-keyword">SELECT</span> 
+    r.review_id,
+    u.name <span class="sql-keyword">AS</span> user_name,
+    g.title <span class="sql-keyword">AS</span> game_title,
+    g.genre,
+    r.rating,
+    r.review_text,
+    r.review_date
+<span class="sql-keyword">FROM</span> REVIEW r
+<span class="sql-keyword">JOIN</span> `USER` u <span class="sql-keyword">ON</span> r.user_id = u.user_id
+<span class="sql-keyword">JOIN</span> GAME g   <span class="sql-keyword">ON</span> r.game_id = g.game_id
+<span class="sql-keyword">ORDER BY</span> r.review_date <span class="sql-keyword">DESC</span>;</code></pre>
+    <div class="query-result">
+        +-----------+--------------+-----------------------------------+--------------------+--------+-------------------------------------------------------+-------------+<br>
+        | review_id | user_name    | game_title                        | genre              | rating | review_text                                           | review_date |<br>
+        +-----------+--------------+-----------------------------------+--------------------+--------+-------------------------------------------------------+-------------+<br>
+        |         6 | Gamer Pro    | Cyberpunk 2077: Phantom Liberty   | RPG                |      3 | Good game but a bit overhyped. Still worth trying.    | 2025-04-05  |<br>
+        |         5 | Sarah Connor | Red Dead Redemption 2             | Open World Action  |      4 | One of the greatest narrative achievements in gaming. | 2025-04-01  |<br>
+        |         4 | Gamer Pro    | Grand Theft Auto V                | Action             |      5 | Classic game. Online mode still has replayability.    | 2025-03-12  |<br>
+        |         3 | John Doe     | God of War Ragnarök               | Action / Adventure |      4 | Graphically stunning and emotionally rich storyline.  | 2025-03-01  |<br>
+        |         2 | Sarah Connor | Elden Ring: Shadow of the Erdtree | Action RPG         |      5 | The hardest and most rewarding boss fights! 10/10!    | 2025-02-15  |<br>
+        |         1 | John Doe     | Cyberpunk 2077: Phantom Liberty   | RPG                |      5 | Absolute masterpiece after all the updates!           | 2025-02-10  |<br>
+        +-----------+--------------+-----------------------------------+--------------------+--------+-------------------------------------------------------+-------------+<br>
+        6 rows in set (0.00 sec)
+    </div>
+
+    <div class="query-title">2. Customer Entitlement Report: USER + LIBRARY + GAME (INNER JOIN)</div>
+    <pre><code><span class="sql-keyword">SELECT</span> 
+    l.library_id,
+    u.name <span class="sql-keyword">AS</span> owner_name,
+    g.title <span class="sql-keyword">AS</span> game_title,
+    g.platform,
+    l.purchase_date,
+    l.status <span class="sql-keyword">AS</span> license_status
+<span class="sql-keyword">FROM</span> `LIBRARY` l
+<span class="sql-keyword">JOIN</span> `USER` u <span class="sql-keyword">ON</span> l.user_id = u.user_id
+<span class="sql-keyword">JOIN</span> GAME g   <span class="sql-keyword">ON</span> l.game_id = g.game_id
+<span class="sql-keyword">ORDER BY</span> u.name <span class="sql-keyword">ASC</span>, l.purchase_date <span class="sql-keyword">DESC</span>;</code></pre>
+    <div class="query-result">
+        +------------+--------------+-----------------------------------+-------------------------+---------------+----------------+<br>
+        | library_id | owner_name   | game_title                        | platform                | purchase_date | license_status |<br>
+        +------------+--------------+-----------------------------------+-------------------------+---------------+----------------+<br>
+        |          4 | Gamer Pro    | Grand Theft Auto V                | PC / Console            | 2025-03-12    | Owned          |<br>
+        |          3 | John Doe     | God of War Ragnarök               | PC / PS5                | 2025-03-01    | Owned          |<br>
+        |          1 | John Doe     | Cyberpunk 2077: Phantom Liberty   | PC / PS5 / Xbox Series  | 2025-02-10    | Owned          |<br>
+        |          5 | Sarah Connor | Red Dead Redemption 2             | PC / PS4 / Xbox One     | 2025-04-01    | Owned          |<br>
+        |          2 | Sarah Connor | Elden Ring: Shadow of the Erdtree | PC / PlayStation / Xbox | 2025-02-15    | Owned          |<br>
+        +------------+--------------+-----------------------------------+-------------------------+---------------+----------------+<br>
+        5 rows in set (0.00 sec)
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 4.2: SUBQUERIES (PAGE 14) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h2>4.2 Subqueries</h2>
+    <p>
+        Subqueries (nested queries) permit dynamic multi-stage filtering where the result of an inner query serves as the comparison predicate for an outer query.
+    </p>
+
+    <div class="query-title">1. Games with Average Rating Strictly Above the Global Platform Average</div>
+    <pre><code><span class="sql-keyword">SELECT</span> 
+    g.game_id,
+    g.title,
+    g.genre,
+    <span class="sql-keyword">ROUND</span>(<span class="sql-keyword">AVG</span>(r.rating), 2) <span class="sql-keyword">AS</span> game_avg_rating,
+    (<span class="sql-keyword">SELECT ROUND</span>(<span class="sql-keyword">AVG</span>(rating), 2) <span class="sql-keyword">FROM</span> REVIEW) <span class="sql-keyword">AS</span> overall_avg_rating
+<span class="sql-keyword">FROM</span> GAME g
+<span class="sql-keyword">JOIN</span> REVIEW r <span class="sql-keyword">ON</span> g.game_id = r.game_id
+<span class="sql-keyword">GROUP BY</span> g.game_id, g.title, g.genre
+<span class="sql-keyword">HAVING AVG</span>(r.rating) > (<span class="sql-keyword">SELECT AVG</span>(rating) <span class="sql-keyword">FROM</span> REVIEW)
+<span class="sql-keyword">ORDER BY</span> game_avg_rating <span class="sql-keyword">DESC</span>;</code></pre>
+    <div class="query-result">
+        +---------+-----------------------------------+------------+-----------------+--------------------+<br>
+        | game_id | title                             | genre      | game_avg_rating | overall_avg_rating |<br>
+        +---------+-----------------------------------+------------+-----------------+--------------------+<br>
+        |       2 | Elden Ring: Shadow of the Erdtree | Action RPG |            5.00 |               4.33 |<br>
+        |       4 | Grand Theft Auto V                | Action     |            5.00 |               4.33 |<br>
+        +---------+-----------------------------------+------------+-----------------+--------------------+<br>
+        2 rows in set (0.00 sec)
+    </div>
+
+    <div class="query-title">2. Users Whose Purchase Volume Exceeds the Platform-Wide Average</div>
+    <pre><code><span class="sql-keyword">SELECT</span> 
+    u.user_id,
+    u.name,
+    u.email,
+    <span class="sql-keyword">COUNT</span>(p.payment_id) <span class="sql-keyword">AS</span> user_purchase_count
+<span class="sql-keyword">FROM</span> `USER` u
+<span class="sql-keyword">JOIN</span> PAYMENT p <span class="sql-keyword">ON</span> u.user_id = p.user_id
+<span class="sql-keyword">WHERE</span> p.payment_status = <span class="sql-string">'Completed'</span>
+<span class="sql-keyword">GROUP BY</span> u.user_id, u.name, u.email
+<span class="sql-keyword">HAVING COUNT</span>(p.payment_id) > (
+    <span class="sql-keyword">SELECT AVG</span>(user_purchases.total_orders)
+    <span class="sql-keyword">FROM</span> (
+        <span class="sql-keyword">SELECT</span> user_id, <span class="sql-keyword">COUNT</span>(payment_id) <span class="sql-keyword">AS</span> total_orders
+        <span class="sql-keyword">FROM</span> PAYMENT
+        <span class="sql-keyword">WHERE</span> payment_status = <span class="sql-string">'Completed'</span>
+        <span class="sql-keyword">GROUP BY</span> user_id
+    ) <span class="sql-keyword">AS</span> user_purchases
+)
+<span class="sql-keyword">ORDER BY</span> user_purchase_count <span class="sql-keyword">DESC</span>;</code></pre>
+    <div class="query-result">
+        +---------+--------------+-------------------+---------------------+<br>
+        | user_id | name         | email             | user_purchase_count |<br>
+        +---------+--------------+-------------------+---------------------+<br>
+        |       1 | John Doe     | john@gamerig.com  |                   2 |<br>
+        |       2 | Sarah Connor | sarah@gamerig.com |                   2 |<br>
+        +---------+--------------+-------------------+---------------------+<br>
+        2 rows in set (0.00 sec)
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 4.3: VIEWS (PAGE 15) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h2>4.3 Views</h2>
+    <p>
+        A database view is a virtual table defined by a stored SQL query. Views provide significant architectural benefits:
+    </p>
+    <ul>
+        <li><strong>Security & Privacy:</strong> Masks sensitive fields (such as hashed passwords) from frontend reporting clients.</li>
+        <li><strong>Query Simplification:</strong> Replaces repetitive 4-table join operations with a simple query against a single virtual object.</li>
+        <li><strong>Consistency:</strong> Ensures business logic (e.g. coalescing null payment records) is centralized within the database.</li>
+    </ul>
+
+    <div class="query-title">Definition of View: Game_Library_Summary</div>
+    <pre><code><span class="sql-keyword">DROP VIEW IF EXISTS</span> Game_Library_Summary;
+
+<span class="sql-keyword">CREATE VIEW</span> Game_Library_Summary <span class="sql-keyword">AS</span>
+<span class="sql-keyword">SELECT</span> 
+    u.name <span class="sql-keyword">AS</span> user_name,
+    u.email <span class="sql-keyword">AS</span> user_email,
+    g.title <span class="sql-keyword">AS</span> game_title,
+    g.genre,
+    l.purchase_date,
+    <span class="sql-keyword">COALESCE</span>(p.payment_status, <span class="sql-string">'N/A'</span>) <span class="sql-keyword">AS</span> payment_status,
+    l.status <span class="sql-keyword">AS</span> library_status
+<span class="sql-keyword">FROM</span> `LIBRARY` l
+<span class="sql-keyword">JOIN</span> `USER` u <span class="sql-keyword">ON</span> l.user_id = u.user_id
+<span class="sql-keyword">JOIN</span> GAME g   <span class="sql-keyword">ON</span> l.game_id = g.game_id
+<span class="sql-keyword">LEFT JOIN</span> PAYMENT p <span class="sql-keyword">ON</span> l.user_id = p.user_id <span class="sql-keyword">AND</span> l.game_id = p.game_id;</code></pre>
+
+    <div class="query-title">Executing and Querying the View</div>
+    <pre><code><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Game_Library_Summary;</code></pre>
+    <div class="query-result">
+        +--------------+-------------------+-----------------------------------+--------------------+---------------+----------------+----------------+<br>
+        | user_name    | user_email        | game_title                        | genre              | purchase_date | payment_status | library_status |<br>
+        +--------------+-------------------+-----------------------------------+--------------------+---------------+----------------+----------------+<br>
+        | John Doe     | john@gamerig.com  | Cyberpunk 2077: Phantom Liberty   | RPG                | 2025-02-10    | Completed      | Owned          |<br>
+        | Sarah Connor | sarah@gamerig.com | Elden Ring: Shadow of the Erdtree | Action RPG         | 2025-02-15    | Completed      | Owned          |<br>
+        | John Doe     | john@gamerig.com  | God of War Ragnarök               | Action / Adventure | 2025-03-01    | Completed      | Owned          |<br>
+        | Gamer Pro    | gamer@gamerig.com | Grand Theft Auto V                | Action             | 2025-03-12    | Completed      | Owned          |<br>
+        | Sarah Connor | sarah@gamerig.com | Red Dead Redemption 2             | Open World Action  | 2025-04-01    | Completed      | Owned          |<br>
+        +--------------+-------------------+-----------------------------------+--------------------+---------------+----------------+----------------+<br>
+        5 rows in set (0.00 sec)
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 4.4: FUNCTIONS & PROCEDURES (PAGE 16) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h2>4.4 Functions and Procedures</h2>
+    <p>
+        Stored routines encapsulate server-side procedural logic directly on the database engine, reducing network latency and centralizing business enforcement.
+    </p>
+
+    <h3>1. Stored Function: GetUserGameCount</h3>
+    <p>
+        A deterministic stored function that computes and returns the total number of games registered in a given user's personal game library.
+    </p>
+    <pre><code><span class="sql-keyword">DELIMITER</span> $$
+
+<span class="sql-keyword">CREATE FUNCTION</span> GetUserGameCount(p_user_id <span class="sql-keyword">INT</span>)
+<span class="sql-keyword">RETURNS INT</span>
+<span class="sql-keyword">DETERMINISTIC</span>
+<span class="sql-keyword">READS SQL DATA</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> game_count <span class="sql-keyword">INT</span>;
+    <span class="sql-keyword">SELECT COUNT</span>(*) <span class="sql-keyword">INTO</span> game_count
+    <span class="sql-keyword">FROM</span> `LIBRARY`
+    <span class="sql-keyword">WHERE</span> user_id = p_user_id;
+    <span class="sql-keyword">RETURN</span> game_count;
+<span class="sql-keyword">END</span>$$
+
+<span class="sql-keyword">DELIMITER</span> ;</code></pre>
+
+    <div class="query-title">Testing Function in a SELECT Statement</div>
+    <pre><code><span class="sql-keyword">SELECT</span> user_id, name, email, GetUserGameCount(user_id) <span class="sql-keyword">AS</span> total_games_in_library <span class="sql-keyword">FROM</span> `USER`;</code></pre>
+    <div class="query-result">
+        +---------+--------------+-------------------+------------------------+<br>
+        | user_id | name         | email             | total_games_in_library |<br>
+        +---------+--------------+-------------------+------------------------+<br>
+        |       1 | John Doe     | john@gamerig.com  |                      2 |<br>
+        |       2 | Sarah Connor | sarah@gamerig.com |                      2 |<br>
+        |       3 | Gamer Pro    | gamer@gamerig.com |                      1 |<br>
+        +---------+--------------+-------------------+------------------------+<br>
+        3 rows in set (0.00 sec)
+    </div>
+
+    <h3>2. Stored Procedure: AddGameReview</h3>
+    <p>
+        Accepts user ID, game ID, numerical star rating, and text comments, automatically stamping the review timestamp and returning confirmation metadata.
+    </p>
+    <pre><code><span class="sql-keyword">DELIMITER</span> $$
+
+<span class="sql-keyword">CREATE PROCEDURE</span> AddGameReview(
+    <span class="sql-keyword">IN</span> p_user_id <span class="sql-keyword">INT</span>,
+    <span class="sql-keyword">IN</span> p_game_id <span class="sql-keyword">INT</span>,
+    <span class="sql-keyword">IN</span> p_rating <span class="sql-keyword">INT</span>,
+    <span class="sql-keyword">IN</span> p_review_text <span class="sql-keyword">TEXT</span>
+)
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">INSERT INTO</span> REVIEW (user_id, game_id, rating, review_text, review_date)
+    <span class="sql-keyword">VALUES</span> (p_user_id, p_game_id, p_rating, p_review_text, <span class="sql-keyword">CURDATE</span>());
+
+    <span class="sql-keyword">SELECT</span> <span class="sql-string">'Review submitted successfully!'</span> <span class="sql-keyword">AS</span> status_message,
+           <span class="sql-keyword">LAST_INSERT_ID</span>() <span class="sql-keyword">AS</span> new_review_id;
+<span class="sql-keyword">END</span>$$
+
+<span class="sql-keyword">DELIMITER</span> ;</code></pre>
+
+    <!-- ========================================== -->
+    <!-- SECTION 5: PHASE IV TRANSACTIONS (PAGE 17) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h1>5. Phase IV Transactions and Data Integrity</h1>
+
+    <h2>5.1 COMMIT, ROLLBACK and SAVEPOINT</h2>
+    <p>
+        A database transaction is a logical unit of work comprising multiple operations that must satisfy the <strong>ACID</strong> criteria:
+    </p>
+    <ul>
+        <li><strong>Atomicity:</strong> All steps succeed together, or the entire transaction is rolled back with zero side effects.</li>
+        <li><strong>Consistency:</strong> The database transitions only between valid states conforming to all schema constraints.</li>
+        <li><strong>Isolation:</strong> Concurrent transactions execute without cross-talk or race conditions.</li>
+        <li><strong>Durability:</strong> Once committed, state changes survive any subsequent server crash or power loss.</li>
+    </ul>
+
+    <h3>1. Successful Transaction Flow with SAVEPOINT</h3>
+    <pre><code><span class="sql-keyword">START TRANSACTION</span>;
+
+<span class="sql-comment">-- Step 1: Concurrency check & lock user and game rows</span>
+<span class="sql-keyword">SELECT</span> user_id, name <span class="sql-keyword">FROM</span> `USER` <span class="sql-keyword">WHERE</span> user_id = 2 <span class="sql-keyword">FOR UPDATE</span>;
+<span class="sql-keyword">SELECT</span> game_id, title, price <span class="sql-keyword">FROM</span> GAME <span class="sql-keyword">WHERE</span> game_id = 3 <span class="sql-keyword">FOR UPDATE</span>;
+
+<span class="sql-comment">-- Step 2: Insert Payment Record</span>
+<span class="sql-keyword">INSERT INTO</span> PAYMENT (user_id, game_id, amount, payment_status, payment_method, payment_date)
+<span class="sql-keyword">VALUES</span> (2, 3, 49.99, <span class="sql-string">'Completed'</span>, <span class="sql-string">'UPI'</span>, <span class="sql-keyword">CURDATE</span>());
+
+<span class="sql-comment">-- Step 3: Establish SAVEPOINT before modifying library</span>
+<span class="sql-keyword">SAVEPOINT</span> BeforeLibraryUpdate;
+
+<span class="sql-comment">-- Step 4: Insert Entitlement License in LIBRARY</span>
+<span class="sql-keyword">INSERT INTO</span> `LIBRARY` (user_id, game_id, purchase_date, status)
+<span class="sql-keyword">VALUES</span> (2, 3, <span class="sql-keyword">CURDATE</span>(), <span class="sql-string">'Owned'</span>);
+
+<span class="sql-comment">-- Step 5: Both succeed -> COMMIT atomically</span>
+<span class="sql-keyword">COMMIT</span>;</code></pre>
+
+    <h3>2. Aborted Transaction with Complete ROLLBACK</h3>
+    <pre><code><span class="sql-keyword">START TRANSACTION</span>;
+
+<span class="sql-comment">-- Step 1: User pays $59.99</span>
+<span class="sql-keyword">INSERT INTO</span> PAYMENT (user_id, game_id, amount, payment_status, payment_method, payment_date)
+<span class="sql-keyword">VALUES</span> (1, 1, 59.99, <span class="sql-string">'Completed'</span>, <span class="sql-string">'Credit Card'</span>, <span class="sql-keyword">CURDATE</span>());
+
+<span class="sql-comment">-- Step 2: Library insertion fails because User 1 already owns Game 1!</span>
+<span class="sql-comment">-- (Triggers Error 1062: Duplicate entry '1-1' for key 'unique_user_game')</span>
+
+<span class="sql-comment">-- Step 3: ROLLBACK completely to prevent orphaned payment deduction</span>
+<span class="sql-keyword">ROLLBACK</span>;</code></pre>
+
+    <!-- ========================================== -->
+    <!-- SECTION 5.2: INTEGRITY CONSTRAINTS (PAGE 18) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h2>5.2 Integrity Constraints</h2>
+    <p>
+        Data integrity rules protect the correctness and reliability of the database. The GameRig schema implements three fundamental categories of constraints:
+    </p>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Constraint Category</th>
+                <th>Implementation in GameRig</th>
+                <th>System Protection Provided</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Entity Integrity</strong></td>
+                <td><code>PRIMARY KEY AUTO_INCREMENT</code> on all 6 tables</td>
+                <td>Guarantees every row has a non-null, uniquely identifiable identity.</td>
+            </tr>
+            <tr>
+                <td><strong>Referential Integrity</strong></td>
+                <td><code>FOREIGN KEY ... ON DELETE CASCADE / SET NULL</code></td>
+                <td>Prevents orphan records; if a user is deleted, their reviews & payments cascade cleanly.</td>
+            </tr>
+            <tr>
+                <td><strong>Domain Integrity</strong></td>
+                <td>Data types (<code>DECIMAL(10,2)</code>, <code>DATE</code>, <code>VARCHAR</code>)</td>
+                <td>Restricts column values to valid technical domains and date formats.</td>
+            </tr>
+            <tr>
+                <td><strong>Check Constraints</strong></td>
+                <td><code>CHECK (rating BETWEEN 1 AND 5)</code>, <code>CHECK (price &gt;= 0)</code></td>
+                <td>Prevents irrational data entry (e.g. negative pricing or 10-star reviews).</td>
+            </tr>
+            <tr>
+                <td><strong>Unique Constraints</strong></td>
+                <td><code>UNIQUE(email)</code>, <code>UNIQUE(user_id, game_id)</code></td>
+                <td>Blocks duplicate user registrations and prevents buying the same game twice.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Constraint Rejection Verification Tests</h3>
+    <pre><code><span class="sql-comment">-- Test 1: CHECK constraint rejection (Rating out of bounds: 6)</span>
+<span class="sql-keyword">INSERT INTO</span> REVIEW (user_id, game_id, rating, review_text, review_date)
+<span class="sql-keyword">VALUES</span> (1, 2, 6, <span class="sql-string">'Too high!'</span>, <span class="sql-keyword">CURDATE</span>());
+<span class="sql-comment">-- RESULT: ERROR 3819 (HY000): Check constraint 'review_chk_1' is violated.</span>
+
+<span class="sql-comment">-- Test 2: Foreign Key rejection (Invalid User ID 9999)</span>
+<span class="sql-keyword">INSERT INTO</span> PAYMENT (user_id, game_id, amount, payment_status, payment_method, payment_date)
+<span class="sql-keyword">VALUES</span> (9999, 1, 59.99, <span class="sql-string">'Completed'</span>, <span class="sql-string">'UPI'</span>, <span class="sql-keyword">CURDATE</span>());
+<span class="sql-comment">-- RESULT: ERROR 1452 (23000): Cannot add or update child row: foreign key constraint fails.</span>
+
+<span class="sql-comment">-- Test 3: Composite UNIQUE constraint rejection (Duplicate game purchase)</span>
+<span class="sql-keyword">INSERT INTO</span> `LIBRARY` (user_id, game_id, purchase_date, status)
+<span class="sql-keyword">VALUES</span> (1, 1, <span class="sql-keyword">CURDATE</span>(), <span class="sql-string">'Owned'</span>);
+<span class="sql-comment">-- RESULT: ERROR 1062 (23000): Duplicate entry '1-1' for key 'LIBRARY.unique_user_game'.</span></code></pre>
+
+    <!-- ========================================== -->
+    <!-- SECTION 5.3: CONCURRENCY ISSUES (PAGE 19) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h2>5.3 Concurrency Issues</h2>
+    <p>
+        In multi-user concurrent environments, simultaneous database interactions can cause severe anomalies if unmanaged:
+    </p>
+    <ul>
+        <li><strong>Lost Updates:</strong> Two users concurrently purchasing the final available copy, overwriting each other's record state.</li>
+        <li><strong>Dirty Reads:</strong> Reading uncommitted modifications made by another concurrent transaction that subsequently rolls back.</li>
+        <li><strong>Non-Repeatable Reads:</strong> Re-reading a row within a single transaction and receiving modified attribute values.</li>
+    </ul>
+
+    <h3>Production Concurrency-Safe Stored Procedure: ProcessGamePurchase</h3>
+    <p>
+        The following stored procedure handles the full commercial transaction with pessimistic row-level locking (<code>FOR UPDATE</code>) and automated error rollback handlers.
+    </p>
+    <pre><code><span class="sql-keyword">DELIMITER</span> $$
+
+<span class="sql-keyword">CREATE PROCEDURE</span> ProcessGamePurchase(
+    <span class="sql-keyword">IN</span> p_user_id <span class="sql-keyword">INT</span>,
+    <span class="sql-keyword">IN</span> p_game_id <span class="sql-keyword">INT</span>,
+    <span class="sql-keyword">IN</span> p_amount <span class="sql-keyword">DECIMAL</span>(10,2),
+    <span class="sql-keyword">IN</span> p_payment_method <span class="sql-keyword">VARCHAR</span>(50)
+)
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> v_user_count <span class="sql-keyword">INT DEFAULT</span> 0;
+    <span class="sql-keyword">DECLARE</span> v_game_count <span class="sql-keyword">INT DEFAULT</span> 0;
+    <span class="sql-keyword">DECLARE</span> v_already_owned <span class="sql-keyword">INT DEFAULT</span> 0;
+
+    <span class="sql-comment">-- Automated Exception Handler: Roll back on any SQL exception</span>
+    <span class="sql-keyword">DECLARE EXIT HANDLER FOR SQLEXCEPTION</span>
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">ROLLBACK</span>;
+        <span class="sql-keyword">SELECT</span> <span class="sql-string">'Transaction Failed: Rolled back completely to maintain Atomicity.'</span> <span class="sql-keyword">AS</span> status_message;
+    <span class="sql-keyword">END</span>;
+
+    <span class="sql-keyword">START TRANSACTION</span>;
+
+    <span class="sql-comment">-- Concurrency Check 1: Verify and lock User row</span>
+    <span class="sql-keyword">SELECT COUNT</span>(*) <span class="sql-keyword">INTO</span> v_user_count <span class="sql-keyword">FROM</span> `USER` <span class="sql-keyword">WHERE</span> user_id = p_user_id <span class="sql-keyword">FOR UPDATE</span>;
+
+    <span class="sql-comment">-- Concurrency Check 2: Verify and lock Game row</span>
+    <span class="sql-keyword">SELECT COUNT</span>(*) <span class="sql-keyword">INTO</span> v_game_count <span class="sql-keyword">FROM</span> GAME <span class="sql-keyword">WHERE</span> game_id = p_game_id <span class="sql-keyword">FOR UPDATE</span>;
+
+    <span class="sql-comment">-- Concurrency Check 3: Check if already owned in library</span>
+    <span class="sql-keyword">SELECT COUNT</span>(*) <span class="sql-keyword">INTO</span> v_already_owned <span class="sql-keyword">FROM</span> `LIBRARY` <span class="sql-keyword">WHERE</span> user_id = p_user_id <span class="sql-keyword">AND</span> game_id = p_game_id <span class="sql-keyword">FOR UPDATE</span>;
+
+    <span class="sql-keyword">IF</span> v_user_count = 0 <span class="sql-keyword">THEN</span>
+        <span class="sql-keyword">SIGNAL SQLSTATE</span> <span class="sql-string">'45000'</span> <span class="sql-keyword">SET MESSAGE_TEXT</span> = <span class="sql-string">'Purchase Aborted: User not found.'</span>;
+    <span class="sql-keyword">END IF</span>;
+
+    <span class="sql-keyword">IF</span> v_game_count = 0 <span class="sql-keyword">THEN</span>
+        <span class="sql-keyword">SIGNAL SQLSTATE</span> <span class="sql-string">'45000'</span> <span class="sql-keyword">SET MESSAGE_TEXT</span> = <span class="sql-string">'Purchase Aborted: Game not found.'</span>;
+    <span class="sql-keyword">END IF</span>;
+
+    <span class="sql-keyword">IF</span> v_already_owned > 0 <span class="sql-keyword">THEN</span>
+        <span class="sql-keyword">SIGNAL SQLSTATE</span> <span class="sql-string">'45000'</span> <span class="sql-keyword">SET MESSAGE_TEXT</span> = <span class="sql-string">'Purchase Aborted: Game already owned in Library.'</span>;
+    <span class="sql-keyword">END IF</span>;
+
+    <span class="sql-comment">-- Step 1: Insert Payment</span>
+    <span class="sql-keyword">INSERT INTO</span> PAYMENT (user_id, game_id, amount, payment_status, payment_method, payment_date)
+    <span class="sql-keyword">VALUES</span> (p_user_id, p_game_id, p_amount, <span class="sql-string">'Completed'</span>, p_payment_method, <span class="sql-keyword">CURDATE</span>());
+
+    <span class="sql-comment">-- Step 2: Establish Savepoint</span>
+    <span class="sql-keyword">SAVEPOINT</span> BeforeLibraryUpdate;
+
+    <span class="sql-comment">-- Step 3: Insert Library Record</span>
+    <span class="sql-keyword">INSERT INTO</span> `LIBRARY` (user_id, game_id, purchase_date, status)
+    <span class="sql-keyword">VALUES</span> (p_user_id, p_game_id, <span class="sql-keyword">CURDATE</span>(), <span class="sql-string">'Owned'</span>);
+
+    <span class="sql-keyword">COMMIT</span>;
+
+    <span class="sql-keyword">SELECT</span> <span class="sql-string">'Purchase completed successfully!'</span> <span class="sql-keyword">AS</span> status_message,
+           p_user_id <span class="sql-keyword">AS</span> user_id, p_game_id <span class="sql-keyword">AS</span> game_id, p_amount <span class="sql-keyword">AS</span> amount_paid;
+<span class="sql-keyword">END</span>$$
+
+<span class="sql-keyword">DELIMITER</span> ;</code></pre>
+
+    <!-- ========================================== -->
+    <!-- SECTION 7 & 8: CONCLUSION & REFERENCES (PAGE 20) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h1>7. Conclusion</h1>
+    <p>
+        The <strong>GameRig</strong> Digital Game Library Management System demonstrates the end-to-end design, implementation, and rigorous optimization of an enterprise relational database. Through systematic progressive phases:
+    </p>
+    <ul>
+        <li><strong>Phase I:</strong> Successfully decomposed business requirements into six normalized entities in Boyce-Codd Normal Form (BCNF), eliminating redundancy and mapping full functional dependencies.</li>
+        <li><strong>Phase II:</strong> Established clean DDL table definitions with domain, entity, and referential constraints, populating baseline records and verifying aggregate analytical queries.</li>
+        <li><strong>Phase III:</strong> Deployed multi-table complex joins, nested and correlated subqueries, abstraction views, stored functions, and stored procedures to streamline business reporting.</li>
+        <li><strong>Phase IV:</strong> Hardened the platform with full ACID transaction handling, <code>FOR UPDATE</code> pessimistic row-level locking, automated exception rollback handlers, and rigorous integrity violation testing.</li>
+    </ul>
+    <p>
+        The resulting database delivers a robust, highly reliable foundation capable of scaling to thousands of concurrent gaming transactions while guaranteeing zero data loss, orphan records, or concurrency anomalies.
+    </p>
+
+    <h1 style="margin-top: 30px;">8. References</h1>
+    <ol>
+        <li>Silberschatz, A., Korth, H. F., & Sudarshan, S. (2020). <em>Database System Concepts</em> (7th ed.). McGraw-Hill Education.</li>
+        <li>Elmasri, R., & Navathe, S. B. (2016). <em>Fundamentals of Database Systems</em> (7th ed.). Pearson.</li>
+        <li>MySQL 8.0 Reference Manual: <em>InnoDB Locking and Transaction Model</em>. Oracle Corporation. Retrieved from <a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking-transaction-model.html" style="color: #0284c7;">dev.mysql.com</a>.</li>
+        <li>Date, C. J. (2003). <em>An Introduction to Database Systems</em> (8th ed.). Addison-Wesley.</li>
+        <li>Codd, E. F. (1970). <em>A Relational Model of Data for Large Shared Data Banks</em>. Communications of the ACM, 13(6), 377-387.</li>
+    </ol>
+
+    <!-- ========================================== -->
+    <!-- SECTION 9: APPENDIX (PAGE 21) -->
+    <!-- ========================================== -->
+    <div class="page-break"></div>
+    <h1>9. Appendix</h1>
+
+    <h2>Appendix A: System Configuration & Environment</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Component</th>
+                <th>Technology / Version</th>
+                <th>Configuration & Port</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Database Server</strong></td>
+                <td>MySQL Server 8.0 Community Edition</td>
+                <td><code>localhost:3306</code> (Default DB: <code>GameRig</code>)</td>
+            </tr>
+            <tr>
+                <td><strong>Backend Server</strong></td>
+                <td>Node.js v24.19.0 + Express 4.19.2</td>
+                <td><code>http://localhost:5050</code> (REST API Engine)</td>
+            </tr>
+            <tr>
+                <td><strong>Frontend Client</strong></td>
+                <td>React 18.2.0 + Vite 5.1.6</td>
+                <td><code>http://localhost:3000</code> (SPA with API Proxy)</td>
+            </tr>
+            <tr>
+                <td><strong>Database Driver</strong></td>
+                <td>mysql2 (Connection Pool mode)</td>
+                <td>Promise-based async/await queries</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Appendix B: REST API Endpoints & Database Mapping</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>HTTP Method</th>
+                <th>Endpoint Route</th>
+                <th>Target SQL Object / Table</th>
+                <th>Operation Performed</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/games</code></td>
+                <td><code>GAME</code> + <code>REVIEW</code></td>
+                <td>Fetch catalog with calculated average star rating</td>
+            </tr>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/auth/login</code></td>
+                <td><code>USER</code> / <code>ADMIN</code></td>
+                <td>Authenticate email and bcrypt-hashed password</td>
+            </tr>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/library/buy</code></td>
+                <td><code>ProcessGamePurchase()</code></td>
+                <td>Execute transaction procedure (Payment + Library)</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/library/:userId</code></td>
+                <td><code>Game_Library_Summary</code></td>
+                <td>Retrieve user-owned library titles</td>
+            </tr>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/reviews</code></td>
+                <td><code>AddGameReview()</code></td>
+                <td>Execute review insertion stored procedure</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/admin/metrics</code></td>
+                <td>Aggregation Queries</td>
+                <td>Real-time user count, game count, and gross revenue</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Appendix C: Evaluation Credentials</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Role</th>
+                <th>Email Address</th>
+                <th>Password</th>
+                <th>Privileges</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>End User</strong></td>
+                <td><code>john@gamerig.com</code></td>
+                <td><code>password123</code></td>
+                <td>Catalog Browse, Buy Games, Personal Library, Submit Reviews</td>
+            </tr>
+            <tr>
+                <td><strong>Admin</strong></td>
+                <td><code>admin@gamerig.com</code></td>
+                <td><code>password123</code></td>
+                <td>Catalog Management, User Administration, Revenue Auditing</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
